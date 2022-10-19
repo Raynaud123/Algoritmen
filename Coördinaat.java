@@ -3,4 +3,6 @@ public class Coördinaat {
     private int y;
 
 
+
+
 }
