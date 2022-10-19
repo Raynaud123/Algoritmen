@@ -22,4 +22,5 @@ public class Coördinaat {
     public void setY(int y) {
         this.y = y;
     }
+
 }
