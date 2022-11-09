@@ -1,13 +1,15 @@
 
 public class Coördinaat {
+    private int id;
     private int x;
     private int y;
-    private int z;
+//    private int z;
 
-    public Coördinaat(int x, int y, int z) {
+    public Coördinaat(int x, int y, int z, int id) {
         this.x = x;
         this.y = y;
-        this.z = z;
+//        this.z = z;
+        this.id = id;
     }
 
     public int getX() {
@@ -26,4 +28,11 @@ public class Coördinaat {
         this.y = y;
     }
 
+//    public int getZ() {
+//        return z;
+//    }
+//
+//    public void setZ(int z) {
+//        this.z = z;
+//    }
 }

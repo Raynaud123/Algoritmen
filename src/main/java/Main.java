@@ -1,20 +1,13 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Main{
+public class Main {
 
-//methodes is er conflict, zo ja conflict pas de het pad aan om conflict te vermijden
+    //methodes is er conflict, zo ja conflict pas de het pad aan om conflict te vermijden
     public static void main(String[] args) {
 
 
@@ -22,17 +15,33 @@ public class Main{
 
         JSONObject data = Inlezer.inlezenJSON();
 
+
+        JSONArray slots = (JSONArray) data.get("slots");
+        JSONArray assignments = (JSONArray) data.get("assignments");
+
+        System.out.println(slots.get(1));
+
         Yard yard = new Yard();
 
-        JSONArray slots  = (JSONArray) data.get("slots");
+        int lengte  = Integer.MIN_VALUE;
+        int breedte = Integer.MIN_VALUE;
 
-        System.out.println(slots);
-        int hoogte = 3;
-
-
-        for (int i = 0; i < slots.size(); i++){
-
+        for (int i = 0; i < slots.size(); i++) {
+            JSONObject slot = new JSONObject();
+            slot.putAll((Map) slots.get(i));
+            int x = (int) slot.get("x");
+            int y = (int) slot.get("y");
+            if(x > lengte){
+                lengte = x;
+            }
+            if(y >breedte){
+                breedte = y;
+            }
         }
+
+        int hoogte = 2;
+        yard.createYard(slots, lengte, breedte, hoogte);
+
 
 
         Scanner sc = new Scanner(System.in);
