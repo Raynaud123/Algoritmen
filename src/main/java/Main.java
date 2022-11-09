@@ -42,8 +42,11 @@ public class Main{
         if (aantalKranen > 3) {
             aantalKranen = 3;
         }
-}
 
+        ContainerStack containerStack = new ContainerStack();
+        containerStack.display(2, 3);
+
+    }
 
 
 }
