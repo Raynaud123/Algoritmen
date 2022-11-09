@@ -24,8 +24,6 @@ public class Inlezer {
             jsonObject.putAll((Map) obj);
 
             return jsonObject;
-            //Iterate over employee array
-            //input.forEach( emp -> parseEmployeeObject( (JSONObject) emp ) );
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

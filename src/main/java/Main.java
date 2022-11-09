@@ -22,7 +22,17 @@ public class Main{
 
         JSONObject data = Inlezer.inlezenJSON();
 
+        Yard yard = new Yard();
 
+        JSONArray slots  = (JSONArray) data.get("slots");
+
+        System.out.println(slots);
+        int hoogte = 3;
+
+
+        for (int i = 0; i < slots.size(); i++){
+
+        }
 
 
         Scanner sc = new Scanner(System.in);
