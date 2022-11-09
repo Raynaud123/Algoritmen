@@ -1,8 +1,15 @@
-package src.main.java;
-
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main{
@@ -10,7 +17,11 @@ public class Main{
 //methodes is er conflict, zo ja conflict pas de het pad aan om conflict te vermijden
     public static void main(String[] args) {
 
-        JSONParser jsonParser = new JSONParser();
+
+        Inlezer jsonInlezer = new Inlezer();
+
+        JSONObject data = Inlezer.inlezenJSON();
+
 
 
 
@@ -22,6 +33,7 @@ public class Main{
             aantalKranen = 3;
         }
 }
+
 
 
 }
