@@ -1,6 +1,13 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -28,6 +35,7 @@ public class Main {
         int lengte  = Integer.MIN_VALUE;
         int breedte = Integer.MIN_VALUE;
 
+        // slots
         for (int i = 0; i < slots.size(); i++) {
             JSONObject slot = new JSONObject();
             slot.putAll((Map) slots.get(i));
@@ -44,6 +52,7 @@ public class Main {
         int hoogte = 2;
         yard.createYard(slots, lengte +1, breedte+1, hoogte);
 
+        // containers
         for(int i = 0; i < containers.size(); i++){
             JSONObject container = new JSONObject();
             container.putAll((Map) containers.get(i));
@@ -51,6 +60,7 @@ public class Main {
             containersArray.add(nieuw);
         }
 
+        // assignments
         for(int i = 0; i < assignments.size(); i++){
             JSONObject assignment = new JSONObject();
             assignment.putAll((Map) assignments.get(i));
@@ -67,8 +77,9 @@ public class Main {
 //            aantalKranen = 3;
 //        }
 //
-//        ContainerStack containerStack = new ContainerStack();
-//        containerStack.display(2, 3);
+
+        ContainerStack containerStack = new ContainerStack();
+        containerStack.display(yard);
 
     }
 

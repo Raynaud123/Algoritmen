@@ -37,19 +37,19 @@ public class Yard {
         JSONArray slots = (JSONArray) slot_id;
         if(container.length == slots.size()){
             for(int i = 0; i < container.length; i++){
-                    int breakVar = Integer.MIN_VALUE;
-                    int x  = mapping_id_xcoor.get(((Long) slots.get(i)).intValue());
-                    for(int j = 0; 0 < matrix[x].length && breakVar != Integer.MAX_VALUE; j ++){
-                        if (matrix[x][j][0].getId() == ((Long) slots.get(i)).intValue()){
-                            for(int h = 0; h < hoogte; h++){
-                                if(matrix[x][j][h].getContainer_id() == Integer.MIN_VALUE){
-                                    matrix[x][j][h].setContainer_id(container.id);
-                                    breakVar = Integer.MAX_VALUE;
-                                    break;
-                                }
-                        }
-                        }
+                int breakVar = Integer.MIN_VALUE;
+                int x  = mapping_id_xcoor.get(((Long) slots.get(i)).intValue());
+                for(int j = 0; 0 < matrix[x].length && breakVar != Integer.MAX_VALUE; j ++){
+                    if (matrix[x][j][0].getId() == ((Long) slots.get(i)).intValue()){
+                        for(int h = 0; h < hoogte; h++){
+                            if(matrix[x][j][h].getContainer_id() == Integer.MIN_VALUE){
+                                matrix[x][j][h].setContainer_id(container.id);
+                                breakVar = Integer.MAX_VALUE;
+                                break;
+                            }
                     }
+                    }
+                }
             }
         }
     }
