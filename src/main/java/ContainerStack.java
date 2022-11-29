@@ -19,7 +19,7 @@ public class ContainerStack extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //indicates terminate operation on close of window
         frame.setSize(800, 800);
         frame.setLayout(new BorderLayout(10,10));
-        frame.setResizable(false);
+//        frame.setResizable(false);
 
         // North
         JPanel panelNorth = new JPanel();
@@ -32,7 +32,7 @@ public class ContainerStack extends JFrame {
                 labelHeight.setText("Height = " + currentHeight);
                 panelCenter = new JPanel();
                 panelCenter.setLayout(new GridLayout(x_length, y_length));
-                fillYard(yard, panelCenter, panel, currentHeight);
+                fillYard(yard, panelCenter, currentHeight);
                 frame.add(panelCenter, BorderLayout.CENTER);
             }
         });
@@ -44,7 +44,7 @@ public class ContainerStack extends JFrame {
                 labelHeight.setText("Height = " + currentHeight);
                 panelCenter = new JPanel();
                 panelCenter.setLayout(new GridLayout(x_length, y_length));
-                fillYard(yard, panelCenter, panel, currentHeight);
+                fillYard(yard, panelCenter, currentHeight);
                 frame.add(panelCenter, BorderLayout.CENTER);
             }
         });
@@ -56,9 +56,8 @@ public class ContainerStack extends JFrame {
         // Center
         panelCenter = new JPanel();
         panelCenter.setLayout(new GridLayout(x_length, y_length));
-        panel = new JPanel[x_length][y_length];
 
-        fillYard(yard, panelCenter, panel, currentHeight);
+        fillYard(yard, panelCenter, currentHeight);
         frame.add(panelCenter, BorderLayout.CENTER);
 
         // South
@@ -71,15 +70,18 @@ public class ContainerStack extends JFrame {
         frame.add(panelSouth, BorderLayout.SOUTH);
     }
 
-    public static void fillYard(Yard yard, JPanel panelCenter, JPanel[][] panel, int currentHeight) {
+    public static void fillYard(Yard yard, JPanel panelCenter, int currentHeight) {
         int x_length = yard.matrix.length;
         int y_length = yard.matrix[0].length;
+        JPanel[][] panel = new JPanel[x_length][y_length];
 
         for (int i=0; i<x_length; i++) {
             for (int j=0; j<y_length; j++) {
 
                 panel[i][j] = new JPanel();
+                panel[i][j].setLayout(new BoxLayout(panel[i][j], BoxLayout.X_AXIS));
                 panel[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
                 if (yard.matrix[i][j][currentHeight].getContainer_id() < 0) {
                     panel[i][j].setBackground(Color.GREEN);
                     panel[i][j].add(new JLabel("Slot (" + i + "," + j + ") = free"));
