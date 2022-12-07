@@ -10,13 +10,12 @@ import java.util.Map;
 public class Inlezer {
 
 
-    public static JSONObject inlezenJSON(){
+    public static JSONObject inlezenJSON(String path){
         JSONParser jsonParser = new JSONParser();
 
-//        URL url = Main.class.getResource("input.json");
 
-        //try (FileReader reader = new FileReader("C:\\Users\\User\\IdeaProjects\\Algoritmen\\src\\main\\input.json"))
-        try (FileReader reader = new FileReader("C:\\Users\\bekem\\IdeaProjects\\Algoritmen\\src\\main\\input.json"))
+
+        try(FileReader reader = new FileReader(path))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);

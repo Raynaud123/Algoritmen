@@ -20,37 +20,28 @@ public class Main {
 
         Inlezer jsonInlezer = new Inlezer();
 
-        JSONObject data = Inlezer.inlezenJSON();
+        //Path ingeven
+        JSONObject data = Inlezer.inlezenJSON("inputGroot.json");
 
 
+        int maxHeight = (int) ((long) data.get("maxheight"));
+        int width = (int) ((long)data.get("width"));
+        int length = (int) ((long)data.get("length"));
         JSONArray slots = (JSONArray) data.get("slots");
         JSONArray assignments = (JSONArray) data.get("assignments");
         JSONArray containers = (JSONArray) data.get("containers");
+        JSONArray cranes =(JSONArray) data.get("cranes");
 
-        System.out.println(slots.get(1));
+//        System.out.println(slots.get(1));
+//        System.out.println(maxHeight);
+//        System.out.println(width);
+//        System.out.println(length);
 
         Yard yard = new Yard();
         ArrayList<Container> containersArray =  new ArrayList<>();
 
-        int lengte  = Integer.MIN_VALUE;
-        int breedte = Integer.MIN_VALUE;
 
-        // slots
-        for (int i = 0; i < slots.size(); i++) {
-            JSONObject slot = new JSONObject();
-            slot.putAll((Map) slots.get(i));
-            int x = ((Long) slot.get("x")).intValue();
-            int y =  ((Long) slot.get("y")).intValue();
-            if(x > lengte){
-                lengte = x;
-            }
-            if(y >breedte){
-                breedte = y;
-            }
-        }
-
-        int hoogte = 2;
-        yard.createYard(slots, lengte +1, breedte+1, hoogte);
+        yard.createYard(slots, length, width, maxHeight);
 
         // containers
         for(int i = 0; i < containers.size(); i++){
@@ -69,17 +60,11 @@ public class Main {
 
         System.out.println(yard);
 
-//        Scanner sc = new Scanner(System.in);
-//
-//        int aantalKranen = sc.nextInt();
-//
-//        if (aantalKranen > 3) {
-//            aantalKranen = 3;
-//        }
-//
+
 
         ContainerStack containerStack = new ContainerStack();
         containerStack.display(yard);
+//        yard.voerBewegingUit(4)
 
     }
 

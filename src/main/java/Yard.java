@@ -9,6 +9,7 @@ public class Yard {
 
     Coördinaat[][][] matrix;
     int hoogte;
+    //Mapping between id en x-cöordinaat
     HashMap<Integer,Integer> mapping_id_xcoor;
 
 
@@ -27,6 +28,7 @@ public class Yard {
             int y = ((Long) slot.get("y")).intValue();
             mapping_id_xcoor.put(((Long) slot.get("id")).intValue(),x);
             for (int j = 0;  j < hoogte; j++){
+                //If no container is assigned, container_id equals Integer_Min_Value
                 matrix[x][y][j] = new Coördinaat(x,y,j,((Long) slot.get("id")).intValue());
             }
         }
@@ -34,23 +36,29 @@ public class Yard {
     }
 
     public void addContainer(Object slot_id, Container container) {
-        JSONArray slots = (JSONArray) slot_id;
-        if(container.length == slots.size()){
-            for(int i = 0; i < container.length; i++){
-                int breakVar = Integer.MIN_VALUE;
-                int x  = mapping_id_xcoor.get(((Long) slots.get(i)).intValue());
-                for(int j = 0; 0 < matrix[x].length && breakVar != Integer.MAX_VALUE; j ++){
-                    if (matrix[x][j][0].getId() == ((Long) slots.get(i)).intValue()){
-                        for(int h = 0; h < hoogte; h++){
-                            if(matrix[x][j][h].getContainer_id() == Integer.MIN_VALUE){
-                                matrix[x][j][h].setContainer_id(container.id);
-                                breakVar = Integer.MAX_VALUE;
-                                break;
+        int slots = (int)((long) slot_id);
+        int startX  = mapping_id_xcoor.get(slots);
+        for(int j = 0; j < matrix[startX].length; j++) {
+            if(matrix[startX][j][0].getId() == (slots)){
+                boolean b = true;
+                for (int h =0; h < hoogte && b; h++){
+                    b = true;
+                    if(matrix[startX][j][h].getContainer_id() == Integer.MIN_VALUE){
+                        int count = 1;
+                        for (int i = 1; i < container.length; i++){
+                            if (matrix[startX+i][j][h].getContainer_id() == Integer.MIN_VALUE){
+                                count++;
                             }
-                    }
+                        }
+                        if (count == container.length){
+                            b=false;
+                            for (int i = 0; i < container.length; i++){
+                                matrix[startX+i][j][h].setContainer_id(container.id);
+                            }
+                        }
                     }
                 }
-            }
+        }
         }
     }
 
@@ -76,5 +84,9 @@ public class Yard {
 
 
         return str.toString();
+    }
+
+    public void voerBewegingUit(int container_id, Coördinaat eind) {
+
     }
 }
