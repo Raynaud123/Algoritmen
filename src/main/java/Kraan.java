@@ -6,28 +6,32 @@ import java.util.Map;
 
 public class Kraan {
 
+    int x;
+    float y;
+    int ymin;
+    int ymax;
+    int id;
+    int xspeed;
+    int yspeed;
+    int xmax;
+    int xmin;
     List<Beweging> bewegingLijst;
     Map<Integer, Coördinaat> traject;
 
-    public Kraan(List<Beweging> bewegingLijst) {
-        this.bewegingLijst = bewegingLijst;
+    public Kraan(int x, float y, int ymin, int ymax, int id, int xspeed, int yspeed, int xmax, int xmin) {
+        this.x = x;
+        this.y = y;
+        this.ymin = ymin;
+        this.ymax = ymax;
+        this.id = id;
+        this.xspeed = xspeed;
+        this.yspeed = yspeed;
+        this.xmax = xmax;
+        this.xmin = xmin;
         this.traject = new HashMap<>();
+        this.bewegingLijst = new ArrayList<>();
     }
 
-    public void voegBewegingToe(Beweging b) {
-        this.bewegingLijst.add(b);
-
-        // 'Trajectories T = [t1:p1, t2:p2, ..., tk:pk] ' , maar klopt lik nog niet helemaal
-        traject.put(b.getTijdstip(), b.getStart());
-    }
-
-    public Beweging getBewegingOpTijdstip(int t) {
-        Beweging beweging = null;
-        for (Beweging b : bewegingLijst) {
-            if (b.getTijdstip() == t) beweging = b;
-        }
-        return beweging;
-    }
 
     public List<Beweging> getBewegingLijst() {
         return bewegingLijst;
@@ -35,5 +39,102 @@ public class Kraan {
 
     public void setBewegingLijst(List<Beweging> bewegingLijst) {
         this.bewegingLijst = bewegingLijst;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public int getYmin() {
+        return ymin;
+    }
+
+    public void setYmin(int ymin) {
+        this.ymin = ymin;
+    }
+
+    public int getYmax() {
+        return ymax;
+    }
+
+    public void setYmax(int ymax) {
+        this.ymax = ymax;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getXspeed() {
+        return xspeed;
+    }
+
+    public void setXspeed(int xspeed) {
+        this.xspeed = xspeed;
+    }
+
+    public int getYspeed() {
+        return yspeed;
+    }
+
+    public void setYspeed(int yspeed) {
+        this.yspeed = yspeed;
+    }
+
+    public int getXmax() {
+        return xmax;
+    }
+
+    public void setXmax(int xmax) {
+        this.xmax = xmax;
+    }
+
+    public int getXmin() {
+        return xmin;
+    }
+
+    public void setXmin(int xmin) {
+        this.xmin = xmin;
+    }
+
+    public Map<Integer, Coördinaat> getTraject() {
+        return traject;
+    }
+
+    public void setTraject(Map<Integer, Coördinaat> traject) {
+        this.traject = traject;
+    }
+
+    @Override
+    public String toString() {
+        return "Kraan{" +
+                "x=" + x +
+                ", y=" + y +
+                ", ymin=" + ymin +
+                ", ymax=" + ymax +
+                ", id=" + id +
+                ", xspeed=" + xspeed +
+                ", yspeed=" + yspeed +
+                ", xmax=" + xmax +
+                ", xmin=" + xmin +
+                ", bewegingLijst=" + bewegingLijst +
+                ", traject=" + traject +
+                '}';
     }
 }

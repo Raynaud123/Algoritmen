@@ -57,6 +57,7 @@ public class Main {
             assignment.putAll((Map) assignments.get(i));
             yard.addContainer(assignment.get("slot_id"),containersArray.get(((Long) assignment.get("container_id")).intValue()-1));
         }
+        yard.addCranes(cranes);
 
         System.out.println(yard);
 

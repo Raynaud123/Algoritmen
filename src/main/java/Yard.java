@@ -1,7 +1,7 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +11,7 @@ public class Yard {
     int hoogte;
     //Mapping between id en x-cöordinaat
     HashMap<Integer,Integer> mapping_id_xcoor;
+    ArrayList<Kraan> cranes;
 
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
@@ -18,6 +19,7 @@ public class Yard {
 
         mapping_id_xcoor = new HashMap<>();
         this.hoogte = hoogte;
+        cranes = new ArrayList<>();
 
 
         matrix = new Coördinaat[lengte][breedte][hoogte];
@@ -84,6 +86,16 @@ public class Yard {
 
 
         return str.toString();
+    }
+
+    public void addCranes(JSONArray cranes){
+        for (int i = 0; i < cranes.size();i++){
+            JSONObject crane = new JSONObject();
+            crane.putAll((Map) cranes.get(i));
+            this.cranes.add(new Kraan(((Long)crane.get("x")).intValue(),((Double) crane.get("y")).floatValue(),((Long) crane.get("ymin")).intValue(),((Long) crane.get("ymax")).intValue(),((Long)crane.get("id")).intValue(), ((Long)crane.get("xspeed")).intValue(),((Long) crane.get("yspeed")).intValue(),((Long) crane.get("xmax")).intValue(),((Long) crane.get("xmin")).intValue()));
+        }
+
+        System.out.println(this.cranes.toString());
     }
 
     public void voerBewegingUit(int container_id, Coördinaat eind) {
