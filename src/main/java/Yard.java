@@ -15,6 +15,7 @@ public class Yard {
     ArrayList<Kraan> cranes;
     ArrayList<Container> notOnTargetId;
     ArrayList<Container> containersThatNeedToBeMoved;
+    ArrayList<Beweging> bewegingen;
 
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
@@ -24,6 +25,7 @@ public class Yard {
         mapping_id_ycoor = new HashMap<>();
         notOnTargetId = new ArrayList<>();
         containersThatNeedToBeMoved = new ArrayList<>();
+        bewegingen = new ArrayList<>();
         this.hoogte = hoogte;
         cranes = new ArrayList<>();
 
@@ -112,11 +114,31 @@ public class Yard {
     public void calculateMovementsTargetAssignments(JSONArray targetassignments, ArrayList<Container> containersArray) {
         findContainersNotOnTargetId(targetassignments, containersArray);
         for (Container c: notOnTargetId){
+            checkTargetId(c, containersArray);
             checkIfContainerFreeToMove(c, containersArray);
         }
-        System.out.println(notOnTargetId);
-        for (Container c: containersThatNeedToBeMoved){
-            System.out.println(c);
+
+
+    }
+
+    private void checkTargetId(Container c, ArrayList<Container> containersArray) {
+        int x = mapping_id_xcoor.get(c.getTarget_id());
+        int y = mapping_id_ycoor.get(c.getTarget_id());
+        boolean mogelijk = false;
+        for (int i = 0; i < hoogte; i++){
+            int count = 0;
+            for(int j = 0; j < c.getLength(); j++){
+                if (matrix[x+j][y][i].getContainer_id()==Integer.MIN_VALUE){
+                    count++;
+                }
+            }
+            if (count == c.getLength()){
+                mogelijk = true;
+            }
+        }
+        if (!mogelijk){
+            //TODO: Implement, geen idee als nodig
+            System.out.println("Niet mogelijk om op target Id te plaatsen. Nog te implementeren");
         }
     }
 
@@ -155,6 +177,7 @@ public class Yard {
             for (Container c : containersArray){
                 if(c.getId() == container_id){
                     if(c.getSlot_id() != target_id){
+                        c.setTarget_id(target_id);
                         notOnTargetId.add(c);
                     }
                 }

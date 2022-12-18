@@ -2,6 +2,7 @@ public class Container {
     private int id;
     private int length;
     private int slot_id;
+    private int target_id;
     private int hoogte;
 
     public Container(Object id, Object length) {
@@ -9,6 +10,7 @@ public class Container {
         this.length = ((Long) length).intValue();
         slot_id = Integer.MIN_VALUE;
         hoogte = Integer.MIN_VALUE;
+        target_id = Integer.MIN_VALUE;
     }
 
     @Override
@@ -49,5 +51,13 @@ public class Container {
 
     public void setHoogte(int hoogte) {
         this.hoogte = hoogte;
+    }
+
+    public int getTarget_id() {
+        return target_id;
+    }
+
+    public void setTarget_id(int target_id) {
+        this.target_id = target_id;
     }
 }
