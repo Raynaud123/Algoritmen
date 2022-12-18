@@ -21,16 +21,43 @@ public class Main {
         Inlezer jsonInlezer = new Inlezer();
 
         //Path ingeven
-        JSONObject data = Inlezer.inlezenJSON("inputGroot.json");
-
-
-        int maxHeight = (int) ((long) data.get("maxheight"));
-        int width = (int) ((long)data.get("width"));
-        int length = (int) ((long)data.get("length"));
-        JSONArray slots = (JSONArray) data.get("slots");
-        JSONArray assignments = (JSONArray) data.get("assignments");
-        JSONArray containers = (JSONArray) data.get("containers");
-        JSONArray cranes =(JSONArray) data.get("cranes");
+        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
+        int maxHeight = 0;
+        int width = 0;
+        int length = 0;
+        int targetHeight;
+        JSONArray slots = null;
+        JSONArray assignments = null;
+        JSONArray cranes = null;
+        JSONArray containers = null;
+        
+        
+        assert data != null;
+        if(data.containsKey("maxheight")){
+            maxHeight = (int) ((long) data.get("maxheight"));
+        }
+        if(data.containsKey("width")){
+            width = (int) ((long)data.get("width"));
+        }
+        if(data.containsKey("length")){
+            length = (int) ((long)data.get("length")); 
+        }
+        if(data.containsKey("targetheight")){
+            targetHeight= (int) ((long) data.get("targetheight"));
+        }
+        if(data.containsKey("slots")){
+            slots = (JSONArray) data.get("slots"); 
+        }
+        if (data.containsKey("assignments")){
+            assignments = (JSONArray) data.get("assignments");
+        }
+        if(data.containsKey("containers")){
+            containers = (JSONArray) data.get("containers");
+        }
+        if(data.containsKey("cranes")){
+            cranes =(JSONArray) data.get("cranes");
+        }
+        
 
 //        System.out.println(slots.get(1));
 //        System.out.println(maxHeight);
@@ -59,7 +86,8 @@ public class Main {
         }
         yard.addCranes(cranes);
 
-        System.out.println(yard);
+
+
 
 
 
