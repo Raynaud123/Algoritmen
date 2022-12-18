@@ -6,15 +6,15 @@ import java.util.Map;
 
 public class Kraan {
 
-    int x;
-    float y;
-    int ymin;
-    int ymax;
-    int id;
-    int xspeed;
-    int yspeed;
-    int xmax;
-    int xmin;
+    private int x;
+    private float y;
+    private int ymin;
+    private int ymax;
+    private int id;
+    private int xspeed;
+    private int yspeed;
+    private int xmax;
+    private int xmin;
     List<Beweging> bewegingLijst;
     Map<Integer, Coördinaat> traject;
 

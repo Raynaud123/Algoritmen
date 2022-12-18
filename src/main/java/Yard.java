@@ -113,10 +113,55 @@ public class Yard {
     //Method for when targetAssignments are given
     public void calculateMovementsTargetAssignments(JSONArray targetassignments, ArrayList<Container> containersArray) {
         findContainersNotOnTargetId(targetassignments, containersArray);
-        for (Container c: notOnTargetId){
+        for (Container c : notOnTargetId) {
             checkTargetId(c, containersArray);
             checkIfContainerFreeToMove(c, containersArray);
         }
+        for (Container c : containersThatNeedToBeMoved) {
+            makeMovement(c);
+        }
+    }
+
+    private void makeMovement(Container c) {
+        int startX = mapping_id_xcoor.get(c.getSlot_id());
+        int startY = mapping_id_ycoor.get(c.getSlot_id());
+        int eindX = mapping_id_xcoor.get(c.getTarget_id());
+        int eindY=mapping_id_ycoor.get(c.getTarget_id());
+        ArrayList<Kraan> availableCranes = new ArrayList<Kraan>();
+        for (Kraan k: cranes){
+            if(startX<eindX){
+                if(startY < eindY){
+                    if(k.getXmin()<=startX && k.getXmax()>=eindX && k.getYmin() <= startY && k.getYmax()>=eindY && !availableCranes.contains(k)){
+                        availableCranes.add(k);
+                    }
+                }else{
+                    if(k.getXmin()<=startX && k.getXmax()>=eindX && k.getYmin() <= eindY && k.getYmax()>=startY && !availableCranes.contains(k)){
+                        availableCranes.add(k);
+                    }
+                }
+            }else {
+                if(startY < eindY){
+                    if(k.getXmin()<=eindX && k.getXmax()>=startX && k.getYmin() <= startY && k.getYmax()>=eindY && !availableCranes.contains(k)){
+                        availableCranes.add(k);
+                    }
+                }else{
+                    if(k.getXmin()<=eindX && k.getXmax()>=startX && k.getYmin() <= eindY && k.getYmax()>=startY && !availableCranes.contains(k)){
+                        availableCranes.add(k);
+                    }
+                }
+            }
+        }
+
+        if (availableCranes.size() > 1){
+            //TODO choose crane from availableCranes
+        }
+        else{
+            addMovement(c,availableCranes.get(0));       
+        }
+    }
+
+    private void addMovement(Container c, Kraan kraan) {
+
 
 
     }
