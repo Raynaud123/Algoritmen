@@ -103,7 +103,7 @@ public class Main {
         }
 
 
-        //System.out.println(yard.toString());
+        System.out.println(yard.toString());
 
 
 

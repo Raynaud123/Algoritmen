@@ -114,7 +114,9 @@ public class Yard {
     public void calculateMovementsTargetAssignments(JSONArray targetassignments, ArrayList<Container> containersArray) {
         findContainersNotOnTargetId(targetassignments, containersArray);
         for (Container c : notOnTargetId) {
+            //Don't Know if needed?
             checkTargetId(c, containersArray);
+            //All containers that need to be moved added to containersthatneedtobemovedArray
             checkIfContainerFreeToMove(c, containersArray);
         }
         for (Container c : containersThatNeedToBeMoved) {
@@ -155,21 +157,65 @@ public class Yard {
         if (availableCranes.size() > 1){
             //TODO choose crane from availableCranes
         }
+        else if(availableCranes.size()==0){
+            //TODO implement noCranesTakeFullMovement
+        }
         else{
             addMovement(c,availableCranes.get(0));       
         }
     }
 
     private void addMovement(Container c, Kraan kraan) {
-
-
-
+        if(bewegingen.isEmpty()){
+            int startTijdstip = 0;
+            int eindTijdstip;
+            int difference_x =Math.abs(mapping_id_xcoor.get(c.getSlot_id())-mapping_id_xcoor.get(c.getTarget_id()));
+            int difference_y = Math.abs(mapping_id_ycoor.get(c.getSlot_id())-mapping_id_ycoor.get(c.getTarget_id()));
+            if (difference_x >= difference_y){
+                eindTijdstip = difference_x/kraan.getXspeed();
+            }else {
+                eindTijdstip = difference_y/kraan.getYspeed();
+            }
+            int hoogte = searchHoogte(c.getLength(),c.getTarget_id());
+            if (hoogte != Integer.MIN_VALUE){
+                Beweging nieuw = new Beweging(startTijdstip,eindTijdstip,matrix[mapping_id_xcoor.get(c.getSlot_id())][mapping_id_ycoor.get(c.getSlot_id())][c.getHoogte()],matrix[mapping_id_xcoor.get(c.getTarget_id())][mapping_id_ycoor.get(c.getTarget_id())][hoogte]);
+                bewegingen.add(nieuw);
+                for (int i = 0; i < c.getLength(); i++){
+                    matrix[mapping_id_xcoor.get(c.getSlot_id())+i][mapping_id_ycoor.get(c.getSlot_id())][c.getHoogte()].setContainer_id(Integer.MIN_VALUE);
+                    matrix[mapping_id_xcoor.get(c.getTarget_id())+i][mapping_id_ycoor.get(c.getTarget_id())][hoogte].setContainer_id(c.getId());
+                }
+                c.setSlot_id(c.getTarget_id());
+                kraan.setX(mapping_id_xcoor.get(c.getTarget_id()));
+                kraan.setY(mapping_id_ycoor.get(c.getTarget_id()));
+                System.out.println(bewegingen);
+            }else {
+                System.out.println("Well damn it");
+            }
+        }else{
+            //TODO: implement
+        }
     }
 
-    private void checkTargetId(Container c, ArrayList<Container> containersArray) {
+    private int searchHoogte(int length, int target_id) {
+        int x = mapping_id_xcoor.get(target_id);
+        int y = mapping_id_ycoor.get(target_id);
+        for (int i = 0; i < hoogte; i++){
+            int count = 0;
+            for(int j = 0; j < length; j++){
+                if (matrix[x+j][y][i].getContainer_id()==Integer.MIN_VALUE){
+                    count++;
+                }
+            }
+            if (count == length){
+                return i;
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    private boolean checkTargetId(Container c, ArrayList<Container> containersArray) {
         int x = mapping_id_xcoor.get(c.getTarget_id());
         int y = mapping_id_ycoor.get(c.getTarget_id());
-        boolean mogelijk = false;
         for (int i = 0; i < hoogte; i++){
             int count = 0;
             for(int j = 0; j < c.getLength(); j++){
@@ -178,13 +224,12 @@ public class Yard {
                 }
             }
             if (count == c.getLength()){
-                mogelijk = true;
+                return true;
             }
         }
-        if (!mogelijk){
-            //TODO: Implement, geen idee als nodig
-            System.out.println("Niet mogelijk om op target Id te plaatsen. Nog te implementeren");
-        }
+        //TODO: Implement, geen idee als nodig als targetId niet beschikbaar is
+        System.out.println("Niet mogelijk om op target Id te plaatsen. Nog te implementeren");
+        return false;
     }
 
     private void checkIfContainerFreeToMove(Container c, ArrayList<Container> containersArray ) {

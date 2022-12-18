@@ -1,24 +1,17 @@
 public class Beweging {
 
-    private int tijdstip;
+    private int startTijdstip;
+    private int eindTijdstip;
     private Coördinaat start;
     private Coördinaat eind;
-    private int snelheid;
 
-    public Beweging(int tijdstip, Coördinaat start, Coördinaat eind, int snelheid) {
-        this.tijdstip = tijdstip;
+    public Beweging(int startTijdstip,int eindTijdstip ,Coördinaat start, Coördinaat eind) {
+        this.startTijdstip = startTijdstip;
+        this.eindTijdstip = eindTijdstip;
         this.start = start;
         this.eind = eind;
-        this.snelheid = snelheid;
     }
 
-    public int getTijdstip() {
-        return tijdstip;
-    }
-
-    public void setTijdstip(int tijdstip) {
-        this.tijdstip = tijdstip;
-    }
 
     public Coördinaat getStart() {
         return start;
@@ -36,11 +29,29 @@ public class Beweging {
         this.eind = eind;
     }
 
-    public int getSnelheid() {
-        return snelheid;
+    public int getStartTijdstip() {
+        return startTijdstip;
     }
 
-    public void setSnelheid(int snelheid) {
-        this.snelheid = snelheid;
+    public void setStartTijdstip(int startTijdstip) {
+        this.startTijdstip = startTijdstip;
+    }
+
+    public int getEindTijdstip() {
+        return eindTijdstip;
+    }
+
+    public void setEindTijdstip(int eindTijdstip) {
+        this.eindTijdstip = eindTijdstip;
+    }
+
+    @Override
+    public String toString() {
+        return "Beweging{" +
+                "startTijdstip=" + startTijdstip +
+                ", eindTijdstip=" + eindTijdstip +
+                ", start=" + start +
+                ", eind=" + eind +
+                '}';
     }
 }
