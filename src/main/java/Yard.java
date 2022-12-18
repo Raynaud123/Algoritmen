@@ -98,7 +98,11 @@ public class Yard {
         System.out.println(this.cranes.toString());
     }
 
-    public void voerBewegingUit(int container_id, Coördinaat eind) {
+    //Method for when targetHeight is specified
+    public void calculateMovementsTargetHeight(int targetHeight) {
+    }
 
+    //Method for when targetAssignments are given
+    public void calculateMovementsTargetAssignments(JSONArray targetassignments) {
     }
 }

@@ -21,15 +21,17 @@ public class Main {
         Inlezer jsonInlezer = new Inlezer();
 
         //Path ingeven
+
         JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
         int maxHeight = 0;
         int width = 0;
         int length = 0;
-        int targetHeight;
+        int targetHeight = Integer.MIN_VALUE;
         JSONArray slots = null;
         JSONArray assignments = null;
         JSONArray cranes = null;
         JSONArray containers = null;
+        JSONArray targetassignments = null;
         
         
         assert data != null;
@@ -44,6 +46,10 @@ public class Main {
         }
         if(data.containsKey("targetheight")){
             targetHeight= (int) ((long) data.get("targetheight"));
+        }
+        else{
+            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
+            targetassignments = (JSONArray) target.get("assignments");
         }
         if(data.containsKey("slots")){
             slots = (JSONArray) data.get("slots"); 
@@ -67,25 +73,33 @@ public class Main {
         Yard yard = new Yard();
         ArrayList<Container> containersArray =  new ArrayList<>();
 
-
+        assert slots != null;
         yard.createYard(slots, length, width, maxHeight);
 
         // containers
-        for(int i = 0; i < containers.size(); i++){
+        assert containers != null;
+        for (Object value : containers) {
             JSONObject container = new JSONObject();
-            container.putAll((Map) containers.get(i));
+            container.putAll((Map) value);
             Container nieuw = new Container(container.get("id"), container.get("length"));
             containersArray.add(nieuw);
         }
 
         // assignments
-        for(int i = 0; i < assignments.size(); i++){
+        assert assignments != null;
+        for (Object o : assignments) {
             JSONObject assignment = new JSONObject();
-            assignment.putAll((Map) assignments.get(i));
-            yard.addContainer(assignment.get("slot_id"),containersArray.get(((Long) assignment.get("container_id")).intValue()-1));
+            assignment.putAll((Map) o);
+            yard.addContainer(assignment.get("slot_id"), containersArray.get(((Long) assignment.get("container_id")).intValue() - 1));
         }
+        assert cranes != null;
         yard.addCranes(cranes);
 
+        if(targetHeight==Integer.MIN_VALUE){
+            yard.calculateMovementsTargetAssignments(targetassignments);
+        }else {
+            yard.calculateMovementsTargetHeight(targetHeight);
+        }
 
 
 
