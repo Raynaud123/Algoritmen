@@ -94,12 +94,16 @@ public class Main {
         }
         assert cranes != null;
         yard.addCranes(cranes);
+       //System.out.println(yard.toString());
 
         if(targetHeight==Integer.MIN_VALUE){
-            yard.calculateMovementsTargetAssignments(targetassignments);
+            yard.calculateMovementsTargetAssignments(targetassignments,containersArray);
         }else {
-            yard.calculateMovementsTargetHeight(targetHeight);
+            yard.calculateMovementsTargetHeight(targetHeight,containersArray);
         }
+
+
+        //System.out.println(yard.toString());
 
 
 
