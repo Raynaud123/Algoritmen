@@ -14,6 +14,7 @@ public class Yard {
     HashMap<Integer,Integer> mapping_id_ycoor;
     ArrayList<Kraan> cranes;
     ArrayList<Container> notOnTargetId;
+    ArrayList<Container> containersThatNeedToBeMoved;
 
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
@@ -22,6 +23,7 @@ public class Yard {
         mapping_id_xcoor = new HashMap<>();
         mapping_id_ycoor = new HashMap<>();
         notOnTargetId = new ArrayList<>();
+        containersThatNeedToBeMoved = new ArrayList<>();
         this.hoogte = hoogte;
         cranes = new ArrayList<>();
 
@@ -52,15 +54,16 @@ public class Yard {
             b = true;
             if(matrix[startX][startY][h].getContainer_id() == Integer.MIN_VALUE){
                 int count = 1;
-                for (int i = 1; i < container.length; i++){
+                for (int i = 1; i < container.getLength(); i++){
                     if (matrix[startX+i][startY][h].getContainer_id() == Integer.MIN_VALUE){
                         count++;
                     }
                 }
-                if (count == container.length){
+                if (count == container.getLength()){
                     b=false;
-                    for (int i = 0; i < container.length; i++){
-                        matrix[startX+i][startY][h].setContainer_id(container.id);
+                    container.setHoogte(h);
+                    for (int i = 0; i < container.getLength(); i++){
+                        matrix[startX+i][startY][h].setContainer_id(container.getId());
                     }
                 }
             }
@@ -108,8 +111,37 @@ public class Yard {
     //Method for when targetAssignments are given
     public void calculateMovementsTargetAssignments(JSONArray targetassignments, ArrayList<Container> containersArray) {
         findContainersNotOnTargetId(targetassignments, containersArray);
-        for (Container c : notOnTargetId){
+        for (Container c: notOnTargetId){
+            checkIfContainerFreeToMove(c, containersArray);
+        }
+        System.out.println(notOnTargetId);
+        for (Container c: containersThatNeedToBeMoved){
             System.out.println(c);
+        }
+    }
+
+    private void checkIfContainerFreeToMove(Container c, ArrayList<Container> containersArray ) {
+
+        int x = mapping_id_xcoor.get(c.getSlot_id());
+        int y = mapping_id_ycoor.get(c.getSlot_id());
+        int z = c.getHoogte();
+        if (z != hoogte-1){
+            for (int i = 0; i < c.getLength();i++){
+                if(Integer.MIN_VALUE != matrix[x + i][y][z+1].getContainer_id()){
+                    //TODO:Snellere manier dan telkens containersArray doorzoeken?
+                        for (Container container: containersArray){
+                            if (container.getId() == matrix[x + i][y][z+1].getContainer_id()){
+                                checkIfContainerFreeToMove(container, containersArray);
+                                break;
+                            }
+                        }
+                }
+                if(!containersThatNeedToBeMoved.contains(c)){
+                    containersThatNeedToBeMoved.add(c);
+                }
+            }
+        }else {
+            containersThatNeedToBeMoved.add(c);
         }
 
     }
@@ -121,7 +153,7 @@ public class Yard {
             int container_id = ((Long) assignment.get("container_id")).intValue();
             int target_id = ((Long) assignment.get("slot_id")).intValue();
             for (Container c : containersArray){
-                if(c.id == container_id){
+                if(c.getId() == container_id){
                     if(c.getSlot_id() != target_id){
                         notOnTargetId.add(c);
                     }
