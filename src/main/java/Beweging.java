@@ -62,7 +62,8 @@ public class Beweging {
     @Override
     public String toString() {
         return "Beweging{" +
-                "startTijdstip=" + startTijdstip +
+                "id=" + id +
+                ", startTijdstip=" + startTijdstip +
                 ", eindTijdstip=" + eindTijdstip +
                 ", start=" + start +
                 ", eind=" + eind +

@@ -17,8 +17,6 @@ public class Yard {
     ArrayList<Kraan> cranes;
     ArrayList<Container> notOnTargetId;
     ArrayList<Container> containersThatNeedToBeMoved;
-    ArrayList<Beweging> bewegingen;
-
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
 
@@ -27,7 +25,6 @@ public class Yard {
         mapping_id_ycoor = new HashMap<>();
         notOnTargetId = new ArrayList<>();
         containersThatNeedToBeMoved = new ArrayList<>();
-        bewegingen = new ArrayList<>();
         this.hoogte = hoogte;
         this.lengte = lengte;
         this.breedte = breedte;
@@ -76,30 +73,6 @@ public class Yard {
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder();
-
-        str.append("Level 0 \n");
-        for (Coördinaat[][] value : matrix) {
-            for (Coördinaat[] coördinaat : value) {
-                str.append(coördinaat[0]);
-            }
-        }
-        str.append("\n");
-
-        str.append("Level 1 \n");
-        for (Coördinaat[][] value : matrix) {
-            for (Coördinaat[] coördinaat : value) {
-                str.append(coördinaat[1]);
-            }
-        }
-        str.append("\n");
-
-
-        return str.toString();
-    }
-
     public void addCranes(JSONArray cranes){
         for (Object o : cranes) {
             JSONObject crane = new JSONObject();
@@ -128,6 +101,9 @@ public class Yard {
         for (Container c : containersThatNeedToBeMoved) {
             makeMovement(c);
         }
+
+
+
     }
 
     private void makeMovement(Container c) {
@@ -174,46 +150,20 @@ public class Yard {
     private void addMovement(Container c, Kraan kraan) {
             int startX= mapping_id_xcoor.get(c.getSlot_id());
             int startY= mapping_id_ycoor.get(c.getSlot_id());
+            int eindX= mapping_id_xcoor.get(c.getTarget_id());
+            int eindY= mapping_id_ycoor.get(c.getTarget_id());
 
             if (kraan.getX() != startX || kraan.getY() != startY){
-                bewegingen.add(new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true));
+                kraan.bewegingLijst.add(new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true));
                 kraan.setX(startX);
                 kraan.setY(startY);
             }
 
-
-
+            kraan.bewegingLijst.add(new Beweging(c.getId(),0,0,matrix[startX][startY][0],matrix[eindX][eindY][0],kraan.getId(),false));
 
     }
 
 
-    private ArrayList<Beweging> searchMovementsInsideTimeInterval(ArrayList<Beweging> bewegingen, int startTijdstip, int id) {
-        ArrayList<Beweging> movementsTime = new ArrayList<>();
-        for (Beweging b: bewegingen){
-            if(b.getKraan_id() != id && b.getStartTijdstip() <= startTijdstip && b.getEindTijdstip() >= startTijdstip){
-                    movementsTime.add(b);
-            }
-        }
-
-        return movementsTime;
-    }
-
-    private int searchHoogte(int length, int target_id) {
-        int x = mapping_id_xcoor.get(target_id);
-        int y = mapping_id_ycoor.get(target_id);
-        for (int i = 0; i < hoogte; i++){
-            int count = 0;
-            for(int j = 0; j < length; j++){
-                if (matrix[x+j][y][i].getContainer_id()==Integer.MIN_VALUE){
-                    count++;
-                }
-            }
-            if (count == length){
-                return i;
-            }
-        }
-        return Integer.MIN_VALUE;
-    }
 
     private boolean checkTargetId(Container c, ArrayList<Container> containersArray) {
         int x = mapping_id_xcoor.get(c.getTarget_id());

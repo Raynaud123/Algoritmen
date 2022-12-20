@@ -22,8 +22,8 @@ public class Main {
 
         //Path ingeven
 
-        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
-        //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
+        //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
+        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
         int maxHeight = 0;
         int width = 0;
         int length = 0;
@@ -49,8 +49,8 @@ public class Main {
             targetHeight= (int) ((long) data.get("targetheight"));
         }
         else{
-            //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
-            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/targetTerminalA_20_10_3_2_100.json");
+            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
+            //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/targetTerminalA_20_10_3_2_100.json");
             targetassignments = (JSONArray) target.get("assignments");
         }
         if(data.containsKey("slots")){
@@ -112,10 +112,9 @@ public class Main {
             yard.calculateMovementsTargetHeight(targetHeight,containersArray);
         }
 
-
-        System.out.println(yard.toString());
-        for(Beweging b : yard.bewegingen){
-            System.out.println(b);
+        for (Kraan k : yard.cranes){
+            System.out.println(k.bewegingLijst);
+            System.out.println();
         }
 
 
