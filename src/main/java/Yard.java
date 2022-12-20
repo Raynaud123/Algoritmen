@@ -94,7 +94,7 @@ public class Yard {
             findContainersOnHighestLevel(containersArray, maxHeight);
             for (Container c : containersOnHighestLevel) {
 
-                int targetId = findEmptyPlace(maxHeight-1, c);
+                int targetId = findEmptyPlace(maxHeight-1, c, containersArray);
                 if (targetId == -1) {
                     // TODO wat als geen plaats gevonden op lager verdiep
                 } else {
@@ -107,20 +107,40 @@ public class Yard {
         }
     }
 
-    private int findEmptyPlace(int hoogte, Container c) {
+    private int findEmptyPlace(int hoogte, Container c, ArrayList<Container> containersArray) {
         int idEmpty = -1;
 
         // TODO : for in for in for kan niet goed zijn
         for (int x=0; x<matrix.length-c.getLength(); x++) {
             for (int y = 0; y < matrix[x].length; y++) {
+
+                // Zoeken naar vrije plaats in verdiep eronder
                 boolean possible = true;
+                int idOfTempSlot = matrix[x][y][hoogte].getId();
                 for (int i = 0; i < c.getLength(); i++) {
+
+                    // Als het bezet is
                     if (matrix[x + i][y][hoogte].getContainer_id() != Integer.MIN_VALUE) {
                         possible = false;
                         break;
-                    } else idEmpty = matrix[x][y][hoogte].getId();
+
+                    }
+                    // Plaats is vrij, controle op constraint voor laag eronder
+                    else {
+
+                        // Constraint 2
+                        if (hoogte-1 != 0 && (matrix[mapping_id_xcoor.get(idOfTempSlot)+i][mapping_id_ycoor.get(idOfTempSlot)][hoogte-1].getContainer_id() == Integer.MIN_VALUE)) {
+                            possible = false;
+                            break;
+                        }
+                        // Constraint 3
+                        else if (hoogte-1 != 0 && c.getLength()<containersArray.get(matrix[mapping_id_xcoor.get(idOfTempSlot)][mapping_id_ycoor.get(idOfTempSlot)][hoogte-1].getContainer_id()).getLength()) {
+                            possible = false;
+                            idEmpty = -1;
+                        }
+                        else idEmpty = idOfTempSlot;
+                    }
                 }
-                // TODO : if voor constraint 3
 
                 if (possible) {
                     return idEmpty;
