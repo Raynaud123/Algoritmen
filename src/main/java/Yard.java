@@ -155,6 +155,16 @@ public class Yard {
 
         checkPotentialCollisions();
 
+        //Check if collision
+        //If collision set time later
+        //Check if the rest of movements still work
+
+
+        System.out.println("size collisions" + potentialCollisions.size());
+
+        for (int i = 0; i < potentialCollisions.size(); i++){
+            System.out.println(potentialCollisions.get(i));
+        }
 
 
     }
@@ -163,22 +173,21 @@ public class Yard {
         for(Beweging b: solution){
             for (Beweging bew: solution){
                 if(bew.getKraan_id() != b.getKraan_id()){
-                    if((bew.getStart().getX() < b.getStart().getX() && b.getStart().getX() < bew.getEind().getX()) ||
-                            (bew.getStart().getX() < b.getEind().getX() && b.getEind().getX() < bew.getEind().getX()) ||
-                            (bew.getEind().getX() < b.getStart().getX() && b.getStart().getX() < bew.getStart().getX()) ||
-                            (bew.getEind().getX() < b.getEind().getX() && b.getEind().getX() < bew.getStart().getX())
+                    if((bew.getStart().getX() <= b.getStart().getX() && b.getStart().getX() <= bew.getEind().getX()) ||
+                            (bew.getStart().getX() <= b.getEind().getX() && b.getEind().getX() <= bew.getEind().getX()) ||
+                            (bew.getEind().getX() <= b.getStart().getX() && b.getStart().getX() <= bew.getStart().getX()) ||
+                            (bew.getEind().getX() <= b.getEind().getX() && b.getEind().getX() <= bew.getStart().getX())
                     ){
                         boolean added = false;
                         for (int i = 0; i < potentialCollisions.size(); i++){
                             if((potentialCollisions.get(i).contains(bew) || potentialCollisions.get(i).contains(b)) && !added){
-                                if(potentialCollisions.get(i).contains(b)){
+                                added = true;
+                                if(potentialCollisions.get(i).contains(b) && !potentialCollisions.get(i).contains(bew)){
                                     potentialCollisions.get(i).add(bew);
-                                    added = true;
                                     break;
                                 }
-                                else {
+                                else if(potentialCollisions.get(i).contains(bew) && !potentialCollisions.get(i).contains(b)) {
                                     potentialCollisions.get(i).add(b);
-                                    added = true;
                                     break;
                                 }
                             }
@@ -220,11 +229,6 @@ public class Yard {
                     }
                 }
             }
-
-            //Check if collision
-            //If collision set time later
-            //Check if the rest of movements still work.
-
 
             solution.add(b);
             index++;

@@ -22,9 +22,9 @@ public class Main {
 
         //Path ingeven
 
-        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/2mh/MH2Terminal_20_10_3_2_100.json");
-//        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
-//        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
+        //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/2mh/MH2Terminal_20_10_3_2_100.json");
+        // JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
+        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
         int maxHeight = 0;
         int width = 0;
         int length = 0;
@@ -50,8 +50,8 @@ public class Main {
             targetHeight= (int) ((long) data.get("targetheight"));
         }
         else{
-//            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
-            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/targetTerminalA_20_10_3_2_100.json");
+             JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
+   //         JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/targetTerminalA_20_10_3_2_100.json");
             targetassignments = (JSONArray) target.get("assignments");
         }
         if(data.containsKey("slots")){
@@ -114,10 +114,10 @@ public class Main {
         }
 
 
-        for (Kraan k : yard.cranes){
-            System.out.println(k.getId() + ": " + k.bewegingLijst);
-            System.out.println();
-        }
+//        for (Kraan k : yard.cranes){
+//            System.out.println(k.getId() + ": " + k.getBewegingLijst());
+//            System.out.println();
+//        }
 
         for(Beweging b: yard.solution){
             System.out.println(b);
