@@ -168,9 +168,7 @@ public class Yard {
         for (Container c : containersThatNeedToBeMoved) {
             makeMovement(c);
         }
-        for (Kraan c: cranes){
-            addLastMove(c);
-        }
+
         Collections.sort(cranes, new sortByLengthMovements());
         int totaleBewegingen = 0;
         for (Kraan c: cranes){
@@ -187,11 +185,6 @@ public class Yard {
         }
     }
 
-    private void addLastMove(Kraan c) {
-        c.getBewegingLijst().add(new Beweging(c.getId(),0,0,matrix[c.getX()][(int) Math.floor(c.getY())][0],matrix[c.getStartX()][(int) Math.floor(c.getY())][0],c.getId(),true));
-        c.setX(c.getStartX());
-        c.setY(c.getStartY());
-    }
 
     private void setStartingTimes(Kraan c) {
         if (solution.isEmpty()){
