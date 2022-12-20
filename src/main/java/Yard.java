@@ -16,6 +16,7 @@ public class Yard {
     ArrayList<Kraan> cranes;
     ArrayList<Container> notOnTargetId;
     ArrayList<Container> containersThatNeedToBeMoved;
+    ArrayList<Container> containersOnHighestLevel;
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
 
@@ -24,6 +25,7 @@ public class Yard {
         mapping_id_ycoor = new HashMap<>();
         notOnTargetId = new ArrayList<>();
         containersThatNeedToBeMoved = new ArrayList<>();
+        containersOnHighestLevel = new ArrayList<>();
         this.hoogte = hoogte;
         this.lengte = lengte;
         this.breedte = breedte;
@@ -84,12 +86,56 @@ public class Yard {
     }
 
     //Method for when targetHeight is specified
-    public void calculateMovementsTargetHeight(int targetHeight, ArrayList<Container> containersArray) {
+    public void calculateMovementsTargetHeight(int maxHeight, int targetHeight, ArrayList<Container> containersArray) {
+        while(maxHeight != targetHeight) {
+            findContainersOnHighestLevel(containersArray, maxHeight);
+            for (Container c : containersOnHighestLevel) {
+
+                int targetId = findEmptyPlace(maxHeight-1, c);
+                if (targetId == -1) {
+                    // TODO wat als geen plaats gevonden op lager verdiep
+                } else {
+                    c.setTarget_id(targetId);
+                    c.setTarget_hoogte(maxHeight-1);
+                    makeMovement(c);
+                }
+            }
+            maxHeight--;
+        }
+    }
+
+    private int findEmptyPlace(int hoogte, Container c) {
+        int idEmpty = -1;
+
+        // TODO : for in for in for kan niet goed zijn
+        for (int x=0; x<matrix.length-c.getLength(); x++) {
+            for (int y = 0; y < matrix[x].length; y++) {
+                boolean possible = true;
+                for (int i = 0; i < c.getLength(); i++) {
+                    if (matrix[x + i][y][hoogte].getContainer_id() != Integer.MIN_VALUE) {
+                        possible = false;
+                        break;
+                    } else idEmpty = matrix[x][y][hoogte].getId();
+                }
+                // TODO : if voor constraint 3
+
+                if (possible) {
+                    return idEmpty;
+                }
+            }
+        }
+        return idEmpty;
+    }
+
+    private void findContainersOnHighestLevel(ArrayList<Container> containersArray, int maxHeight) {
+        for (Container c : containersArray) {
+            if (c.getHoogte() == maxHeight-1) containersOnHighestLevel.add(c);
+        }
     }
 
     //Method for when targetAssignments are given
-    public void calculateMovementsTargetAssignments(JSONArray targetassignments, ArrayList<Container> containersArray) {
-        findContainersNotOnTargetId(targetassignments, containersArray);
+    public void calculateMovementsTargetAssignments(JSONArray targetAssignments, ArrayList<Container> containersArray) {
+        findContainersNotOnTargetId(targetAssignments, containersArray);
         for (Container c : notOnTargetId) {
             //Don't Know if needed?
             checkTargetId(c, containersArray);
@@ -151,18 +197,19 @@ public class Yard {
     }
 
     private void addMovement(Container c, Kraan kraan) {
-            int startX= mapping_id_xcoor.get(c.getSlot_id());
-            int startY= mapping_id_ycoor.get(c.getSlot_id());
-            int eindX= mapping_id_xcoor.get(c.getTarget_id());
-            int eindY= mapping_id_ycoor.get(c.getTarget_id());
+        int startX= mapping_id_xcoor.get(c.getSlot_id());
+        int startY= mapping_id_ycoor.get(c.getSlot_id());
+        int eindX= mapping_id_xcoor.get(c.getTarget_id());
+        int eindY= mapping_id_ycoor.get(c.getTarget_id());
 
-            if (kraan.getX() != startX || kraan.getY() != startY){
-                kraan.bewegingLijst.add(new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true));
-                kraan.setX(startX);
-                kraan.setY(startY);
-            }
+        if (kraan.getX() != startX || kraan.getY() != startY){
+            kraan.bewegingLijst.add(new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true));
+            kraan.setX(startX);
+            kraan.setY(startY);
 
-            kraan.bewegingLijst.add(new Beweging(c.getId(),0,0,matrix[startX][startY][0],matrix[eindX][eindY][0],kraan.getId(),false));
+        }
+
+        kraan.bewegingLijst.add(new Beweging(c.getId(),0,0,matrix[startX][startY][0],matrix[eindX][eindY][0],kraan.getId(),false));
 
     }
 
@@ -237,6 +284,10 @@ public class Yard {
 
     public int getBreedte() {
         return breedte;
+    }
+
+    public Coördinaat[][][] getMatrix() {
+        return matrix;
     }
 }
 

@@ -22,8 +22,9 @@ public class Main {
 
         //Path ingeven
 
-        //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
-        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
+        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/2mh/MH2Terminal_20_10_3_2_100.json");
+//        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
+//        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
         int maxHeight = 0;
         int width = 0;
         int length = 0;
@@ -49,8 +50,8 @@ public class Main {
             targetHeight= (int) ((long) data.get("targetheight"));
         }
         else{
-            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
-            //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/targetTerminalA_20_10_3_2_100.json");
+//            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
+            JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/targetTerminalA_20_10_3_2_100.json");
             targetassignments = (JSONArray) target.get("assignments");
         }
         if(data.containsKey("slots")){
@@ -109,17 +110,24 @@ public class Main {
         if(targetHeight==Integer.MIN_VALUE){
             yard.calculateMovementsTargetAssignments(targetassignments,containersArray);
         }else {
-            yard.calculateMovementsTargetHeight(targetHeight,containersArray);
+            yard.calculateMovementsTargetHeight(maxHeight, targetHeight,containersArray);
         }
 
+
         for (Kraan k : yard.cranes){
-            System.out.println(k.bewegingLijst);
+            System.out.println(k.getId() + ": " + k.bewegingLijst);
             System.out.println();
         }
 
 
+//        new Gui("Hoogte 0 ", yard, 0);
+//        new Gui("Hoogte 1", yard, 1);
+//        new Gui("Hoogte 2", yard, 2);
+//        new Gui("Max height", yard, maxHeight-1);
 
-        Gui gui = new Gui("Container gui", yard, 0);
+        for (int i=0; i<maxHeight; i++) {
+            new Gui("Hoogte " + i, yard, i);
+        }
 
 //        ContainerStack containerStack = new ContainerStack();
 //        containerStack.display(yard);
