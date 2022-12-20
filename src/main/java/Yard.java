@@ -104,7 +104,9 @@ public class Yard {
         for (Object o : cranes) {
             JSONObject crane = new JSONObject();
             crane.putAll((Map) o);
-            this.cranes.add(new Kraan(((Long) crane.get("x")).intValue(), ((Double) crane.get("y")).floatValue(), ((Long) crane.get("ymin")).intValue(), ((Long) crane.get("ymax")).intValue(), ((Long) crane.get("id")).intValue(), ((Long) crane.get("xspeed")).intValue(), ((Long) crane.get("yspeed")).intValue(), ((Long) crane.get("xmax")).intValue(), ((Long) crane.get("xmin")).intValue()));
+            System.out.println(crane.get("y"));
+
+            this.cranes.add(new Kraan(((Long) crane.get("x")).intValue(), Float.parseFloat(crane.get("y").toString()), ((Long) crane.get("ymin")).intValue(), ((Long) crane.get("ymax")).intValue(), ((Long) crane.get("id")).intValue(), ((Long) crane.get("xspeed")).intValue(), ((Long) crane.get("yspeed")).intValue(), ((Long) crane.get("xmax")).intValue(), ((Long) crane.get("xmin")).intValue()));
         }
 
         System.out.println(this.cranes.toString());
@@ -162,7 +164,7 @@ public class Yard {
             //TODO choose crane from availableCranes
         }
         else if(availableCranes.size()==0){
-            //TODO implement noCranesTakeFullMovement
+            //TODO implement noCranesTakeFullMovement, wss extra containers toevoegen aan containersthatneedtobemoved
         }
         else{
             addMovement(c,availableCranes.get(0));       
@@ -170,34 +172,30 @@ public class Yard {
     }
 
     private void addMovement(Container c, Kraan kraan) {
-        if(bewegingen.isEmpty()){
-            int startTijdstip = 0;
-            int eindTijdstip;
-            int difference_x = Math.abs(mapping_id_xcoor.get(c.getSlot_id())-mapping_id_xcoor.get(c.getTarget_id()));
-            int difference_y = Math.abs(mapping_id_ycoor.get(c.getSlot_id())-mapping_id_ycoor.get(c.getTarget_id()));
-            if (difference_x >= difference_y){
-                eindTijdstip = difference_x/kraan.getXspeed();
-            }else {
-                eindTijdstip = difference_y/kraan.getYspeed();
+            int startX= mapping_id_xcoor.get(c.getSlot_id());
+            int startY= mapping_id_ycoor.get(c.getSlot_id());
+
+            if (kraan.getX() != startX || kraan.getY() != startY){
+                bewegingen.add(new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true));
+                kraan.setX(startX);
+                kraan.setY(startY);
             }
-            int hoogte = searchHoogte(c.getLength(),c.getTarget_id());
-            if (hoogte != Integer.MIN_VALUE){
-                Beweging nieuw = new Beweging(startTijdstip,eindTijdstip,matrix[mapping_id_xcoor.get(c.getSlot_id())][mapping_id_ycoor.get(c.getSlot_id())][c.getHoogte()],matrix[mapping_id_xcoor.get(c.getTarget_id())][mapping_id_ycoor.get(c.getTarget_id())][hoogte]);
-                bewegingen.add(nieuw);
-                for (int i = 0; i < c.getLength(); i++){
-                    matrix[mapping_id_xcoor.get(c.getSlot_id())+i][mapping_id_ycoor.get(c.getSlot_id())][c.getHoogte()].setContainer_id(Integer.MIN_VALUE);
-                    matrix[mapping_id_xcoor.get(c.getTarget_id())+i][mapping_id_ycoor.get(c.getTarget_id())][hoogte].setContainer_id(c.getId());
-                }
-                c.setSlot_id(c.getTarget_id());
-                kraan.setX(mapping_id_xcoor.get(c.getTarget_id()));
-                kraan.setY(mapping_id_ycoor.get(c.getTarget_id()));
-                System.out.println(bewegingen);
-            }else {
-                System.out.println("Well damn it");
+
+
+
+
+    }
+
+
+    private ArrayList<Beweging> searchMovementsInsideTimeInterval(ArrayList<Beweging> bewegingen, int startTijdstip, int id) {
+        ArrayList<Beweging> movementsTime = new ArrayList<>();
+        for (Beweging b: bewegingen){
+            if(b.getKraan_id() != id && b.getStartTijdstip() <= startTijdstip && b.getEindTijdstip() >= startTijdstip){
+                    movementsTime.add(b);
             }
-        }else{
-            //TODO: implement
         }
+
+        return movementsTime;
     }
 
     private int searchHoogte(int length, int target_id) {
