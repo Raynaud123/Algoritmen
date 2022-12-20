@@ -7,39 +7,27 @@ public class Gui extends JFrame {
 
         final int lengte = yard.getLengte();
         final int breedte = yard.getBreedte();
-        final int squareCount = lengte*breedte;
 
         // Color of board
         Color green = Color.GREEN;
         Color orange = Color.ORANGE;
-        JButton chessButton;
+        JButton slot;
 
         for (int i=0; i<lengte; i++) {
             for (int j=0; j<breedte; j++) {
                 if (yard.matrix[i][j][hoogte].getContainer_id() < 0) {
-                    chessButton = new JButton();
-                    chessButton.setBackground(green);
-                    add(chessButton);
+                    slot = new JButton();
+                    slot.setBackground(green);
+                    add(slot);
                 }
                 else {
-                    chessButton = new JButton();
-                    chessButton.setBackground(orange);
-                    add(chessButton);
+                    slot = new JButton();
+                    slot.setBackground(orange);
+                    slot.setText(Integer.toString(yard.getMatrix()[i][j][hoogte].getContainer_id()));
+                    add(slot);
                 }
             }
         }
-
-/*        for (int i = 1; i <= squareCount; i++) {
-            if (i % 2 == 0) { // Adding color based on the odd and even initially.
-                chessButton = new JButton();
-                chessButton.setBackground(green);
-                add(chessButton);
-            } else {
-                chessButton = new JButton();
-                chessButton.setBackground(orange);
-                add(chessButton);
-            }
-        }*/
 
         this.setTitle(title); // Setting the title of board
         this.setLayout(new GridLayout(yard.getLengte(), yard.getBreedte())); // GridLayout will arrange elements in Grid Manager
