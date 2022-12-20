@@ -7,7 +7,9 @@ import java.util.Map;
 public class Kraan {
 
     private int x;
+    private int startX;
     private float y;
+    private float startY;
     private int ymin;
     private int ymax;
     private int id;
@@ -19,7 +21,9 @@ public class Kraan {
 
     public Kraan(int x, float y, int ymin, int ymax, int id, int xspeed, int yspeed, int xmax, int xmin) {
         this.x = x;
+        this.startX = x;
         this.y = y;
+        this.startY = y;
         this.ymin = ymin;
         this.ymax = ymax;
         this.id = id;
@@ -127,5 +131,21 @@ public class Kraan {
                 ", xmin=" + xmin +
                 ", bewegingLijst=" + bewegingLijst +
                 '}';
+    }
+
+    public int getStartX() {
+        return startX;
+    }
+
+    public void setStartX(int startX) {
+        this.startX = startX;
+    }
+
+    public float getStartY() {
+        return startY;
+    }
+
+    public void setStartY(float startY) {
+        this.startY = startY;
     }
 }
