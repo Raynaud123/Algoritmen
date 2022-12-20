@@ -9,6 +9,8 @@ public class Yard {
 
     Coördinaat[][][] matrix;
     int hoogte;
+    int lengte;
+    int breedte;
     //Mapping between id en x-cöordinaat
     HashMap<Integer,Integer> mapping_id_xcoor;
     HashMap<Integer,Integer> mapping_id_ycoor;
@@ -27,6 +29,8 @@ public class Yard {
         containersThatNeedToBeMoved = new ArrayList<>();
         bewegingen = new ArrayList<>();
         this.hoogte = hoogte;
+        this.lengte = lengte;
+        this.breedte = breedte;
         cranes = new ArrayList<>();
 
 
@@ -128,7 +132,7 @@ public class Yard {
         int startX = mapping_id_xcoor.get(c.getSlot_id());
         int startY = mapping_id_ycoor.get(c.getSlot_id());
         int eindX = mapping_id_xcoor.get(c.getTarget_id());
-        int eindY=mapping_id_ycoor.get(c.getTarget_id());
+        int eindY= mapping_id_ycoor.get(c.getTarget_id());
         ArrayList<Kraan> availableCranes = new ArrayList<Kraan>();
         for (Kraan k: cranes){
             if(startX<eindX){
@@ -169,7 +173,7 @@ public class Yard {
         if(bewegingen.isEmpty()){
             int startTijdstip = 0;
             int eindTijdstip;
-            int difference_x =Math.abs(mapping_id_xcoor.get(c.getSlot_id())-mapping_id_xcoor.get(c.getTarget_id()));
+            int difference_x = Math.abs(mapping_id_xcoor.get(c.getSlot_id())-mapping_id_xcoor.get(c.getTarget_id()));
             int difference_y = Math.abs(mapping_id_ycoor.get(c.getSlot_id())-mapping_id_ycoor.get(c.getTarget_id()));
             if (difference_x >= difference_y){
                 eindTijdstip = difference_x/kraan.getXspeed();
@@ -274,5 +278,13 @@ public class Yard {
             }
         }
 
+    }
+
+    public int getLengte() {
+        return lengte;
+    }
+
+    public int getBreedte() {
+        return breedte;
     }
 }

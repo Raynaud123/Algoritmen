@@ -108,9 +108,10 @@ public class Main {
 
 
 
+        Gui gui = new Gui("Container gui", yard, 0);
 
-        ContainerStack containerStack = new ContainerStack();
-        containerStack.display(yard);
+//        ContainerStack containerStack = new ContainerStack();
+//        containerStack.display(yard);
 //        yard.voerBewegingUit(4)
 
     }
