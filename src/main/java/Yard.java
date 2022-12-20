@@ -179,14 +179,14 @@ public class Yard {
             System.out.println(solution.size());
             for (Kraan c: cranes){
                 if (c.getBewegingLijst().size() != 0){
-                    setStartingTimes(c);
+                    totaleBewegingen = setStartingTimes(c,totaleBewegingen);
                 }
             }
         }
     }
 
 
-    private void setStartingTimes(Kraan c) {
+    private int setStartingTimes(Kraan c,int totaal) {
         if (solution.isEmpty()){
             Beweging b = c.getBewegingLijst().get(0);
             int startX = b.getStart().getX();
@@ -199,6 +199,7 @@ public class Yard {
             b.setStartTijdstip(0);
             b.setEindTijdstip((int) Math.ceil(duur));
             solution.add(c.getBewegingLijst().get(0));
+            c.getAddedMovements().add(c.getBewegingLijst().get(0));
             c.getBewegingLijst().remove(0);
         }else {
             Beweging volgende = c.getBewegingLijst().get(0);
@@ -221,19 +222,77 @@ public class Yard {
                 volgende.setStartTijdstip(0);
                 volgende.setEindTijdstip((int) Math.ceil(duur));
             }
+            Beweging temp = null;
+            boolean tempAdded = false;
             for (Beweging b :solution){
                 if(b.getKraan_id() != volgende.getKraan_id()){
                     if(inSameTimeInterval(b,volgende) && isCollision(b,volgende)){
                         volgende.setStartTijdstip(b.getEindTijdstip()+1);
                         volgende.setEindTijdstip(b.getEindTijdstip()+1+(int) Math.ceil(duur));
+                    }else if(isLatestmove(b)){
+                        if(isCollision(b,volgende)){
+                            System.out.println("collision");
+                           temp = moveKraan(b.getKraan_id(), volgende.getStartTijdstip(), volgende.getStart(), volgende.getEind());
+                           tempAdded = true;
+                        }
                     }
                 }
             }
+            if (tempAdded){
+                solution.add(temp);
+                totaal++;
+            }
+            c.getAddedMovements().add(volgende);
             solution.add(volgende);
             c.getBewegingLijst().remove(0);
+            return totaal;
         }
 
+        return totaal;
+    }
 
+    private Beweging moveKraan(int kraan_id, int startTijdstip, Coördinaat startCoordinaat, Coördinaat eindCoordinaat) {
+        for (Kraan k : cranes){
+            if(kraan_id == k.getId()){
+                int index = k.getAddedMovements().size();
+                int startX = k.getX();
+                float startY = k.getY();
+                int start = startTijdstip;
+                int eindX = 0;
+                int duur = 0;
+                if(startCoordinaat.getX()-eindCoordinaat.getX() > 0){
+                    eindX = startX - 2;
+                    if(eindX < 0){
+                        eindX=0;
+                    }
+                    duur = 2/k.getXspeed();
+                }else {
+                    eindX = startX + 2;
+                    if (eindX>lengte){
+                        eindX=lengte;
+                    }
+                    duur = 2/k.getXspeed();
+                }
+                Beweging nieuwe = new Beweging(Integer.MIN_VALUE,startTijdstip,startTijdstip+duur,matrix[startX][(int) Math.ceil(startY)][0], matrix[eindX][(int) Math.ceil(startY)][0],kraan_id,true);
+                k.setX(eindX);
+                k.setY((int) Math.ceil(startY));
+                k.getAddedMovements().add(nieuwe);
+                return nieuwe;
+            }
+        }
+        return null;
+    }
+
+    private boolean isLatestmove(Beweging b) {
+        for (Kraan k : cranes){
+            if(b.getKraan_id() == k.getId()){
+                int index = k.getAddedMovements().size();
+                if(k.getAddedMovements().get(index-1).getEindTijdstip() == b.getEindTijdstip()){
+                    return  true;
+                };
+            }
+        }
+        return false;
     }
 
     private boolean isCollision(Beweging b, Beweging volgende) {
