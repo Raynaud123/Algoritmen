@@ -113,10 +113,13 @@ public class Main {
         }
 
         for (Kraan k : yard.cranes){
-            System.out.println(k.bewegingLijst);
+            System.out.println(k.getBewegingLijst());
             System.out.println();
         }
 
+        for(Beweging b: yard.solution){
+            System.out.println(b);
+        }
 
 
         Gui gui = new Gui("Container gui", yard, 0);

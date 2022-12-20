@@ -15,8 +15,7 @@ public class Kraan {
     private int yspeed;
     private int xmax;
     private int xmin;
-    List<Beweging> bewegingLijst;
-    Map<Integer, Coördinaat> traject;
+    private List<Beweging> bewegingLijst;
 
     public Kraan(int x, float y, int ymin, int ymax, int id, int xspeed, int yspeed, int xmax, int xmin) {
         this.x = x;
@@ -28,7 +27,6 @@ public class Kraan {
         this.yspeed = yspeed;
         this.xmax = xmax;
         this.xmin = xmin;
-        this.traject = new HashMap<>();
         this.bewegingLijst = new ArrayList<>();
     }
 
@@ -113,13 +111,7 @@ public class Kraan {
         this.xmin = xmin;
     }
 
-    public Map<Integer, Coördinaat> getTraject() {
-        return traject;
-    }
 
-    public void setTraject(Map<Integer, Coördinaat> traject) {
-        this.traject = traject;
-    }
 
     @Override
     public String toString() {
@@ -134,7 +126,6 @@ public class Kraan {
                 ", xmax=" + xmax +
                 ", xmin=" + xmin +
                 ", bewegingLijst=" + bewegingLijst +
-                ", traject=" + traject +
                 '}';
     }
 }

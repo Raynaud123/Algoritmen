@@ -71,4 +71,20 @@ public class Beweging {
                 ", tussenBeweging=" + tussenBeweging +
                 '}';
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isTussenBeweging() {
+        return tussenBeweging;
+    }
+
+    public void setTussenBeweging(boolean tussenBeweging) {
+        this.tussenBeweging = tussenBeweging;
+    }
 }
