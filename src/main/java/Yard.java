@@ -1,9 +1,7 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Yard {
 
@@ -11,6 +9,7 @@ public class Yard {
     int hoogte;
     int lengte;
     int breedte;
+    ArrayList<Beweging> solution;
     //Mapping between id en x-cöordinaat
     HashMap<Integer,Integer> mapping_id_xcoor;
     HashMap<Integer,Integer> mapping_id_ycoor;
@@ -29,6 +28,7 @@ public class Yard {
         this.lengte = lengte;
         this.breedte = breedte;
         cranes = new ArrayList<>();
+        solution = new ArrayList<>();
 
 
         matrix = new Coördinaat[lengte][breedte][hoogte];
@@ -77,12 +77,10 @@ public class Yard {
         for (Object o : cranes) {
             JSONObject crane = new JSONObject();
             crane.putAll((Map) o);
-            System.out.println(crane.get("y"));
 
             this.cranes.add(new Kraan(((Long) crane.get("x")).intValue(), Float.parseFloat(crane.get("y").toString()), ((Long) crane.get("ymin")).intValue(), ((Long) crane.get("ymax")).intValue(), ((Long) crane.get("id")).intValue(), ((Long) crane.get("xspeed")).intValue(), ((Long) crane.get("yspeed")).intValue(), ((Long) crane.get("xmax")).intValue(), ((Long) crane.get("xmin")).intValue()));
         }
 
-        System.out.println(this.cranes.toString());
     }
 
     //Method for when targetHeight is specified
@@ -100,6 +98,11 @@ public class Yard {
         }
         for (Container c : containersThatNeedToBeMoved) {
             makeMovement(c);
+        }
+
+        Collections.sort(cranes, new sortByLengthMovements());
+        for (Kraan c: cranes){
+            System.out.println(c.getId());
         }
 
 
@@ -234,5 +237,16 @@ public class Yard {
 
     public int getBreedte() {
         return breedte;
+    }
+}
+
+class sortByLengthMovements implements Comparator<Kraan> {
+
+    // Method
+    // Sorting in ascending order of roll number
+    public int compare(Kraan a, Kraan b)
+    {
+
+        return b.bewegingLijst.size() - a.bewegingLijst.size();
     }
 }
