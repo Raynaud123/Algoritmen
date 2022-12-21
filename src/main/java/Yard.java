@@ -95,12 +95,12 @@ public class Yard {
             findContainersOnHighestLevel(containersArray, maxHeight);
             for (Container c : containersOnHighestLevel) {
 
-                int targetId = findEmptyPlace(maxHeight-1, c, containersArray);
+                int targetId = findEmptyPlace(maxHeight-2, c, containersArray);
                 if (targetId == -1) {
                     // TODO wat als geen plaats gevonden op lager verdiep
                 } else {
                     c.setTarget_id(targetId);
-                    c.setTarget_hoogte(maxHeight-1);
+                    c.setTarget_hoogte(maxHeight-2);
                     makeMovement(c);
                 }
             }
@@ -118,7 +118,7 @@ public class Yard {
 
                 // Zoeken naar vrije plaats in verdiep eronder
                 boolean possible = true;
-                int idOfTempSlot = matrix[x][y][hoogte].getId();
+                int idOfPossibleEmptySlot = matrix[x][y][hoogte].getId();
                 for (int i = 0; i < c.getLength(); i++) {
 
                     // Als het bezet is
@@ -129,18 +129,19 @@ public class Yard {
                     }
                     // Plaats is vrij, controle op constraint voor laag eronder
                     else {
+                        int containerBelow = matrix[mapping_id_xcoor.get(idOfPossibleEmptySlot+i)][mapping_id_ycoor.get(idOfPossibleEmptySlot)][hoogte-1].getContainer_id();
 
                         // Constraint 2
-                        if (hoogte-1 != 0 && (matrix[mapping_id_xcoor.get(idOfTempSlot)+i][mapping_id_ycoor.get(idOfTempSlot)][hoogte-1].getContainer_id() == Integer.MIN_VALUE)) {
+                        if (hoogte-1 != 0 && (containerBelow != Integer.MIN_VALUE)) {
                             possible = false;
                             break;
                         }
                         // Constraint 3
-                        else if (hoogte-1 != 0 && c.getLength()<containersArray.get(matrix[mapping_id_xcoor.get(idOfTempSlot)][mapping_id_ycoor.get(idOfTempSlot)][hoogte-1].getContainer_id()).getLength()) {
+                        else if (hoogte-1 != 0 && c.getLength()<containersArray.get(containerBelow).getLength()) {
                             possible = false;
                             idEmpty = -1;
                         }
-                        else idEmpty = idOfTempSlot;
+                        else idEmpty = idOfPossibleEmptySlot;
                     }
                 }
 
