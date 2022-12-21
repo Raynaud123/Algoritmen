@@ -88,6 +88,7 @@ public class Yard {
 
     }
 
+
     //Method for when targetHeight is specified
     public void calculateMovementsTargetHeight(int maxHeight, int targetHeight, ArrayList<Container> containersArray) {
         while(maxHeight != targetHeight) {
@@ -105,12 +106,13 @@ public class Yard {
             }
             maxHeight--;
         }
+
+        addTimestampsToSolution();
     }
 
     private int findEmptyPlace(int hoogte, Container c, ArrayList<Container> containersArray) {
         int idEmpty = -1;
 
-        // TODO : for in for in for kan niet goed zijn
         for (int x=0; x<matrix.length-c.getLength(); x++) {
             for (int y = 0; y < matrix[x].length; y++) {
 
@@ -156,6 +158,7 @@ public class Yard {
         }
     }
 
+
     //Method for when targetAssignments are given
     public void calculateMovementsTargetAssignments(JSONArray targetAssignments, ArrayList<Container> containersArray) {
         findContainersNotOnTargetId(targetAssignments, containersArray);
@@ -169,13 +172,18 @@ public class Yard {
             makeMovement(c);
         }
 
+        addTimestampsToSolution();
+    }
+
+
+    private void addTimestampsToSolution() {
         Collections.sort(cranes, new sortByLengthMovements());
         int totaleBewegingen = 0;
         for (Kraan c: cranes){
             totaleBewegingen+=c.getBewegingLijst().size();
         }
 
-        while (solution.size() != totaleBewegingen){
+        while (solution.size() != totaleBewegingen) {
             System.out.println(solution.size());
             for (Kraan c: cranes){
                 if (c.getBewegingLijst().size() != 0){
@@ -184,7 +192,6 @@ public class Yard {
             }
         }
     }
-
 
     private int setStartingTimes(Kraan c,int totaal) {
         if (solution.isEmpty()){
