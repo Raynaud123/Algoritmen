@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Container {
     private int id;
     private int length;
@@ -5,6 +7,7 @@ public class Container {
     private int target_id;
     private int target_hoogte;
     private int hoogte;
+    private ArrayList<Container> priorityMoves;
 
     public Container(Object id, Object length) {
         this.id = ((Long) id).intValue();
@@ -13,6 +16,7 @@ public class Container {
         hoogte = Integer.MIN_VALUE;
         target_id = Integer.MIN_VALUE;
         target_hoogte = Integer.MIN_VALUE;
+        this.priorityMoves = new ArrayList<>();
     }
 
     @Override
@@ -69,5 +73,13 @@ public class Container {
 
     public void setTarget_hoogte(int target_hoogte) {
         this.target_hoogte = target_hoogte;
+    }
+
+    public ArrayList<Container> getPriorityMoves() {
+        return priorityMoves;
+    }
+
+    public void setPriorityMoves(ArrayList<Container> priorityMoves) {
+        this.priorityMoves = priorityMoves;
     }
 }

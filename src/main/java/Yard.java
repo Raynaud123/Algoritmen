@@ -5,6 +5,7 @@ import java.util.*;
 
 public class Yard {
 
+    //We can possibly use stack as height
     Coördinaat[][][] matrix;
     int hoogte;
     int lengte;
@@ -13,11 +14,12 @@ public class Yard {
     //Mapping between id en x-cöordinaat
     HashMap<Integer,Integer> mapping_id_xcoor;
     HashMap<Integer,Integer> mapping_id_ycoor;
+    ArrayList<Container> containersArray;
     ArrayList<Kraan> cranes;
     ArrayList<Container> notOnTargetId;
     ArrayList<Container> containersThatNeedToBeMoved;
-    ArrayList<List<Beweging>> potentialCollisions;
     ArrayList<Container> containersOnHighestLevel;
+    ArrayList<Beweging> temp;
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
 
@@ -28,12 +30,12 @@ public class Yard {
         notOnTargetId = new ArrayList<>();
         containersThatNeedToBeMoved = new ArrayList<>();
         containersOnHighestLevel = new ArrayList<>();
+        temp = new ArrayList<>();
         this.hoogte = hoogte;
         this.lengte = lengte;
         this.breedte = breedte;
         cranes = new ArrayList<>();
         solution = new ArrayList<>();
-        potentialCollisions = new ArrayList<>();
 
 
         matrix = new Coördinaat[lengte][breedte][hoogte];
@@ -91,6 +93,7 @@ public class Yard {
 
     //Method for when targetHeight is specified
     public void calculateMovementsTargetHeight(int maxHeight, int targetHeight, ArrayList<Container> containersArray) {
+        this.containersArray = containersArray;
         while(maxHeight != targetHeight) {
             findContainersOnHighestLevel(containersArray, maxHeight);
             for (Container c : containersOnHighestLevel) {
@@ -163,12 +166,27 @@ public class Yard {
     //Method for when targetAssignments are given
     public void calculateMovementsTargetAssignments(JSONArray targetAssignments, ArrayList<Container> containersArray) {
         findContainersNotOnTargetId(targetAssignments, containersArray);
-        for (Container c : notOnTargetId) {
-            //Don't Know if needed?
-            checkTargetId(c, containersArray);
-            //All containers that need to be moved added to containersthatneedtobemovedArray
-            checkIfContainerFreeToMove(c, containersArray);
+        for (Container c : containersArray) {
+            if(notOnTargetId.contains(c)){
+                checkTargetId(c, containersArray);
+            }
         }
+        boolean opnieuw = true;
+
+        do{
+            for (Container c : notOnTargetId){
+                if (!containersThatNeedToBeMoved.contains(c)){
+                    boolean test = checkIfContainerFreeToMove(c, containersArray);
+                    if (!test){
+                        opnieuw = test;
+                        System.out.println(c);
+                    }
+                }
+                //All containers that need to be moved added to containersthatneedtobemovedArray
+            }
+            System.out.println("opnieuw");
+        }while (!opnieuw);
+
         for (Container c : containersThatNeedToBeMoved) {
             makeMovement(c);
         }
@@ -193,6 +211,31 @@ public class Yard {
             }
         }
     }
+
+
+
+    private int calculateHoogte(int eindX, float eindY,Coördinaat start, int id) {
+        int hoogte = 0;
+        Container c = null;
+        for (Container cont: containersArray){
+            if (cont.getId() == id){
+                c = cont;
+            }
+        }
+        for (int i = 0; i < this.hoogte; i++){
+            int hit = 0;
+            for (int j = 0; j < c.getLength(); j++){
+                if (matrix[eindX+j][(int) Math.ceil(eindY)][i].getContainer_id() == Integer.MIN_VALUE){
+                    hit++;
+                }
+            }
+            if (hit == c.getLength()){
+                hoogte = i;
+            }
+        }
+        return  hoogte;
+    }
+
 
     private int setStartingTimes(Kraan c,int totaal) {
         if (solution.isEmpty()){
@@ -226,6 +269,7 @@ public class Yard {
                     volgende.setEindTijdstip(b.getEindTijdstip()+1+(int) Math.ceil(duur));
                 }
             }
+            //Hits to know if first movement of crane X
             if (hits == 0){
                 volgende.setStartTijdstip(0);
                 volgende.setEindTijdstip((int) Math.ceil(duur));
@@ -238,8 +282,8 @@ public class Yard {
                         volgende.setStartTijdstip(b.getEindTijdstip()+1);
                         volgende.setEindTijdstip(b.getEindTijdstip()+1+(int) Math.ceil(duur));
                     }else if(isLatestmove(b)){
+                        //If crane has no movements left but collision happens
                         if(isCollision(b,volgende)){
-                            System.out.println("collision");
                            temp = moveKraan(b.getKraan_id(), volgende.getStartTijdstip(), volgende.getStart(), volgende.getEind());
                            tempAdded = true;
                         }
@@ -276,11 +320,13 @@ public class Yard {
                 }else {
                     eindX = startX + 2;
                     if (eindX>lengte){
-                        eindX=lengte;
+                        //TODO check when fully implemented
+                        eindX=lengte-1;
                     }
                 }
                 duur = 2/k.getXspeed();
-                Beweging nieuwe = new Beweging(Integer.MIN_VALUE,startTijdstip,startTijdstip+duur,matrix[startX][(int) Math.ceil(startY)][0], matrix[eindX][(int) Math.ceil(startY)][0],kraan_id,true);
+                System.out.println("test" + eindX);
+                Beweging nieuwe = new Beweging(Integer.MIN_VALUE,startTijdstip,startTijdstip+duur,matrix[startX][(int) Math.floor(startY)][0], matrix[eindX][(int) Math.floor(startY)][0],kraan_id,true);
                 k.setX(eindX);
                 k.setY((int) Math.ceil(startY));
                 k.getAddedMovements().add(nieuwe);
@@ -346,8 +392,11 @@ public class Yard {
 
         if (availableCranes.size() > 1){
             //TODO choose crane from availableCranes
+            System.out.println("more then 1 crane");
         }
         else if(availableCranes.size()==0){
+            System.out.println("No cranes");
+            System.out.println(c);
             //TODO implement noCranesTakeFullMovement, wss extra containers toevoegen aan containersthatneedtobemoved
         }
         else{
@@ -361,15 +410,19 @@ public class Yard {
         int eindX= mapping_id_xcoor.get(c.getTarget_id());
         int eindY= mapping_id_ycoor.get(c.getTarget_id());
 
-            if (kraan.getX() != startX || kraan.getY() != startY){
-                kraan.getBewegingLijst().add(new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true));
-                kraan.setX(startX);
-                kraan.setY(startY);
-            }
+//        if (kraan.getX() != startX || kraan.getY() != startY){
+//            Beweging tussen = new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true);
+//            temp.add(tussen);
+//            kraan.getBewegingLijst().add(tussen);
+//            kraan.setX(startX);
+//            kraan.setY(startY);
+//        }
 
-            kraan.getBewegingLijst().add(new Beweging(c.getId(),0,0,matrix[startX][startY][0],matrix[eindX][eindY][0],kraan.getId(),false));
-            kraan.setX(eindX);
-            kraan.setY(eindY);
+        Beweging effec = new Beweging(c.getId(),0,0,matrix[startX][startY][0],matrix[eindX][eindY][0],kraan.getId(),false);
+        temp.add(effec);
+        kraan.getBewegingLijst().add(effec);
+//        kraan.setX(eindX);
+//        kraan.setY(eindY);
     }
 
 
@@ -388,20 +441,36 @@ public class Yard {
                 return true;
             }
         }
-        //TODO: Implement, if not on target id  in arraylist containerstobemoved
-        System.out.println("Niet mogelijk om op target Id te plaatsen. Nog te implementeren");
-        return false;
+        int indexCont = Integer.MIN_VALUE;
+        int indexC = Integer.MIN_VALUE;
+        for (Container cont : notOnTargetId){
+            if(cont.getSlot_id() == c.getTarget_id()){
+                  indexCont = notOnTargetId.indexOf(cont);
+                  indexC = notOnTargetId.indexOf(c);
+                  c.getPriorityMoves().add(cont);
+            }
+        }
+
+        if(indexCont < indexC){
+            return true;
+        }else {
+            notOnTargetId.remove(indexC);
+            notOnTargetId.add(indexCont,c);
+            return true;
+        }
+        //TODO: Implement, if not on target id  in arraylist containerstobemoved, done I think?
+        //return false;
     }
 
-    private void checkIfContainerFreeToMove(Container c, ArrayList<Container> containersArray ) {
+    private boolean checkIfContainerFreeToMove(Container c, ArrayList<Container> containersArray ) {
 
         int x = mapping_id_xcoor.get(c.getSlot_id());
         int y = mapping_id_ycoor.get(c.getSlot_id());
         int z = c.getHoogte();
+        //If container on top no need to check below
         if (z != hoogte-1){
             for (int i = 0; i < c.getLength();i++){
                 if(Integer.MIN_VALUE != matrix[x + i][y][z+1].getContainer_id()){
-                    //TODO:Snellere manier dan telkens containersArray doorzoeken?
                         for (Container container: containersArray){
                             if (container.getId() == matrix[x + i][y][z+1].getContainer_id()){
                                 checkIfContainerFreeToMove(container, containersArray);
@@ -411,12 +480,21 @@ public class Yard {
                 }
                 if(!containersThatNeedToBeMoved.contains(c)){
                     containersThatNeedToBeMoved.add(c);
+                    return true;
+                }else {
+                    return true;
                 }
             }
         }else {
-            containersThatNeedToBeMoved.add(c);
+            if(containersThatNeedToBeMoved.containsAll(c.getPriorityMoves())){
+                containersThatNeedToBeMoved.add(c);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-
+        return false;
     }
 
     private void findContainersNotOnTargetId(JSONArray targetassignments, ArrayList<Container> containersArray) {

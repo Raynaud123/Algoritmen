@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Beweging {
 
     private  int id;
@@ -7,6 +9,7 @@ public class Beweging {
     private Coördinaat eind;
     private int kraan_id;
     private boolean tussenBeweging;
+    ArrayList<Beweging> priorityMoves;
 
     public Beweging(int id,int startTijdstip,int eindTijdstip ,Coördinaat start, Coördinaat eind, int kraan_id, boolean tussenBeweging) {
         this.id = id;
@@ -16,6 +19,7 @@ public class Beweging {
         this.eind = eind;
         this.kraan_id = kraan_id;
         this.tussenBeweging = tussenBeweging;
+        this.priorityMoves = new ArrayList<>();
     }
 
 
