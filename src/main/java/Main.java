@@ -1,16 +1,8 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Main {
 
@@ -18,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
 
 
-        Inlezer jsonInlezer = new Inlezer();
+        new Inlezer();
 
         //Path ingeven
 //        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/2mh/MH2Terminal_20_10_3_2_100.json");
@@ -136,11 +128,6 @@ public class Main {
         for(Beweging b: yard.solution){
             System.out.println(b);
         }
-
-//        new Gui("Hoogte 0 ", yard, 0);
-//        new Gui("Hoogte 1", yard, 1);
-//        new Gui("Hoogte 2", yard, 2);
-//        new Gui("Max height", yard, maxHeight-1);
 
         for (int i=0; i<maxHeight; i++) {
             new Gui("Hoogte " + i, yard, i);

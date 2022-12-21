@@ -64,12 +64,4 @@ public class Coördinaat {
                 ", container_id=" + container_id +
                 '}';
     }
-
-//    public int getZ() {
-//        return z;
-//    }
-//
-//    public void setZ(int z) {
-//        this.z = z;
-//    }
 }

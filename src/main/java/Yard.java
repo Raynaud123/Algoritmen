@@ -177,7 +177,7 @@ public class Yard {
 
 
     private void addTimestampsToSolution() {
-        Collections.sort(cranes, new sortByLengthMovements());
+        cranes.sort(new sortByLengthMovements());
         int totaleBewegingen = 0;
         for (Kraan c: cranes){
             totaleBewegingen+=c.getBewegingLijst().size();
@@ -261,25 +261,24 @@ public class Yard {
     private Beweging moveKraan(int kraan_id, int startTijdstip, Coördinaat startCoordinaat, Coördinaat eindCoordinaat) {
         for (Kraan k : cranes){
             if(kraan_id == k.getId()){
-                int index = k.getAddedMovements().size();
+//                int index = k.getAddedMovements().size();
                 int startX = k.getX();
                 float startY = k.getY();
-                int start = startTijdstip;
-                int eindX = 0;
-                int duur = 0;
+//                int start = startTijdstip;
+                int eindX ;
+                int duur;
                 if(startCoordinaat.getX()-eindCoordinaat.getX() > 0){
                     eindX = startX - 2;
                     if(eindX < 0){
                         eindX=0;
                     }
-                    duur = 2/k.getXspeed();
                 }else {
                     eindX = startX + 2;
                     if (eindX>lengte){
                         eindX=lengte;
                     }
-                    duur = 2/k.getXspeed();
                 }
+                duur = 2/k.getXspeed();
                 Beweging nieuwe = new Beweging(Integer.MIN_VALUE,startTijdstip,startTijdstip+duur,matrix[startX][(int) Math.ceil(startY)][0], matrix[eindX][(int) Math.ceil(startY)][0],kraan_id,true);
                 k.setX(eindX);
                 k.setY((int) Math.ceil(startY));
@@ -303,21 +302,14 @@ public class Yard {
     }
 
     private boolean isCollision(Beweging b, Beweging volgende) {
-        if((volgende.getStart().getX() <= b.getStart().getX() && b.getStart().getX() <= volgende.getEind().getX()) ||
+        return (volgende.getStart().getX() <= b.getStart().getX() && b.getStart().getX() <= volgende.getEind().getX()) ||
                 (volgende.getStart().getX() <= b.getEind().getX() && b.getEind().getX() <= volgende.getEind().getX()) ||
                 (volgende.getEind().getX() <= b.getStart().getX() && b.getStart().getX() <= volgende.getStart().getX()) ||
-                (volgende.getEind().getX() <= b.getEind().getX() && b.getEind().getX() <= volgende.getStart().getX())
-        ){
-                return true;
-        }
-        return false;
+                (volgende.getEind().getX() <= b.getEind().getX() && b.getEind().getX() <= volgende.getStart().getX());
     }
 
     private boolean inSameTimeInterval(Beweging b, Beweging volgende) {
-        if (b != volgende && ((b.getStartTijdstip()<= volgende.getEindTijdstip() && b.getEindTijdstip() >= volgende.getEindTijdstip()) || (b.getStartTijdstip()<= volgende.getStartTijdstip()&&b.getEindTijdstip()>=volgende.getStartTijdstip()))){
-            return true;
-        }
-        return false;
+        return b != volgende && ((b.getStartTijdstip() <= volgende.getEindTijdstip() && b.getEindTijdstip() >= volgende.getEindTijdstip()) || (b.getStartTijdstip() <= volgende.getStartTijdstip() && b.getEindTijdstip() >= volgende.getStartTijdstip()));
     }
 
 
