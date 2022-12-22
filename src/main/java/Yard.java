@@ -195,7 +195,6 @@ public class Yard {
         addTimestampsToSolution();
     }
 
-
     private void addTimestampsToSolution() {
         cranes.sort(new sortByLengthMovements());
         int totaleBewegingen = 0;
