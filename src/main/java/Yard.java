@@ -470,16 +470,17 @@ public class Yard {
                     if(feasible(i,j,h,c)){
                         int middenX= i;
                         int middenY= j;
+                        int targetHoogte = h;
 
                         if (startKraan.getX() != startX || startKraan.getY() != startY){
-                            Beweging tussen = new Beweging(c.getId(),0,0,matrix[startKraan.getX()][(int) Math.floor(startKraan.getY())][0],matrix[startX][startY][0],startKraan.getId(),true);
+                            Beweging tussen = new Beweging(c.getId(),0,0,matrix[startKraan.getX()][(int) Math.floor(startKraan.getY())][startKraan.getZ()],matrix[startX][startY][c.getHoogte()],startKraan.getId(),true);
                             temp.add(tussen);
                             startKraan.getBewegingLijst().add(tussen);
                             startKraan.setX(startX);
                             startKraan.setY(startY);
                         }
 
-                        Beweging effec = new Beweging(c.getId(),0,0,matrix[startX][startY][0],matrix[middenX][middenY][0],startKraan.getId(),false);
+                        Beweging effec = new Beweging(c.getId(),0,0,matrix[startX][startY][c.getHoogte()],matrix[middenX][middenY][h],startKraan.getId(),false);
                         temp.add(effec);
                         startKraan.getBewegingLijst().add(effec);
                         startKraan.setX(middenX);
@@ -487,7 +488,7 @@ public class Yard {
 
 
                         if (eindKraan.getX() != middenX || eindKraan.getY() != middenY){
-                            Beweging tussen = new Beweging(c.getId(),0,0,matrix[eindKraan.getX()][(int) Math.floor(eindKraan.getY())][0],matrix[middenX][middenY][0],eindKraan.getId(),true);
+                            Beweging tussen = new Beweging(c.getId(),0,0,matrix[eindKraan.getX()][(int) Math.floor(eindKraan.getY())][eindKraan.getZ()],matrix[middenX][middenY][h],eindKraan.getId(),true);
                             temp.add(tussen);
                             tussen.priorityMoves.add(effec);
                             eindKraan.getBewegingLijst().add(tussen);
@@ -498,7 +499,7 @@ public class Yard {
                         System.out.println("start" + startKraan.getId());
                         System.out.println("eind" + eindKraan.getId());
 
-                        Beweging eind = new Beweging(c.getId(),0,0,matrix[middenX][middenY][0],matrix[eindX][eindY][0],eindKraan.getId(),false);
+                        Beweging eind = new Beweging(c.getId(),0,0,matrix[middenX][middenY][h],matrix[eindX][eindY][0],eindKraan.getId(),false);
                         temp.add(eind);
                         eind.priorityMoves.add(effec);
                         eindKraan.getBewegingLijst().add(eind);
@@ -553,18 +554,20 @@ public class Yard {
         int eindY= mapping_id_ycoor.get(c.getTarget_id());
 
         if (kraan.getX() != startX || kraan.getY() != startY){
-            Beweging tussen = new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][0],matrix[startX][startY][0],kraan.getId(),true);
+            Beweging tussen = new Beweging(c.getId(),0,0,matrix[kraan.getX()][(int) Math.floor(kraan.getY())][kraan.getZ()],matrix[startX][startY][c.getHoogte()],kraan.getId(),true);
             temp.add(tussen);
             kraan.getBewegingLijst().add(tussen);
             kraan.setX(startX);
             kraan.setY(startY);
+            kraan.setZ(c.getHoogte());
         }
 
-        Beweging effec = new Beweging(c.getId(),0,0,matrix[startX][startY][0],matrix[eindX][eindY][0],kraan.getId(),false);
+        Beweging effec = new Beweging(c.getId(),0,0,matrix[startX][startY][c.getHoogte()],matrix[eindX][eindY][c.getTarget_hoogte()],kraan.getId(),false);
         temp.add(effec);
         kraan.getBewegingLijst().add(effec);
         kraan.setX(eindX);
         kraan.setY(eindY);
+        kraan.setZ(c.getTarget_hoogte());
     }
 
 
@@ -580,6 +583,7 @@ public class Yard {
                 }
             }
             if (count == c.getLength()){
+                c.setTarget_hoogte(i);
                 return true;
             }
         }
@@ -590,6 +594,7 @@ public class Yard {
                   indexCont = notOnTargetId.indexOf(cont);
                   indexC = notOnTargetId.indexOf(c);
                   c.getPriorityMoves().add(cont);
+                  c.setTarget_hoogte(cont.getHoogte());
             }
         }
 
@@ -667,6 +672,18 @@ public class Yard {
 
     public Coördinaat[][][] getMatrix() {
         return matrix;
+    }
+
+    public void setMatrix(Coördinaat[][][] matrix) {
+        this.matrix = matrix;
+    }
+
+    public ArrayList<Kraan> getCranes() {
+        return cranes;
+    }
+
+    public void setCranes(ArrayList<Kraan> cranes) {
+        this.cranes = cranes;
     }
 }
 

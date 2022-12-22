@@ -15,6 +15,7 @@ public class Kraan {
     private int xmin;
     private List<Beweging> bewegingLijst;
     private  List<Beweging> addedMovements;
+    private int z;
 
     public Kraan(int x, float y, int ymin, int ymax, int id, int xspeed, int yspeed, int xmax, int xmin) {
         this.x = x;
@@ -28,6 +29,7 @@ public class Kraan {
         this.xmin = xmin;
         this.bewegingLijst = new ArrayList<>();
         this.addedMovements = new ArrayList<>();
+        this.z = 2;
     }
 
 
@@ -136,5 +138,13 @@ public class Kraan {
 
     public void setAddedMovements(List<Beweging> addedMovements) {
         this.addedMovements = addedMovements;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
     }
 }
