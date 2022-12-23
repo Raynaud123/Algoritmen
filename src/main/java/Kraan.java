@@ -13,6 +13,7 @@ public class Kraan {
     private int yspeed;
     private int xmax;
     private int xmin;
+    private int kraanBewegingAantal;
     private List<Beweging> bewegingLijst;
     private  List<Beweging> addedMovements;
     private int z;
@@ -22,6 +23,7 @@ public class Kraan {
         this.y = y;
         this.ymin = ymin;
         this.ymax = ymax;
+        this.kraanBewegingAantal = 0;
         this.id = id;
         this.xspeed = xspeed;
         this.yspeed = yspeed;
@@ -146,5 +148,13 @@ public class Kraan {
 
     public void setZ(int z) {
         this.z = z;
+    }
+
+    public int getKraanBewegingAantal() {
+        return kraanBewegingAantal;
+    }
+
+    public void setKraanBewegingAantal(int kraanBewegingAantal) {
+        this.kraanBewegingAantal = kraanBewegingAantal;
     }
 }

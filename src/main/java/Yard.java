@@ -256,20 +256,22 @@ public class Yard {
 
 
     private int setStartingTimes(Kraan c,int totaal) {
-        if (solution.isEmpty()){
+        if (solution.isEmpty() ){
             Beweging b = c.getBewegingLijst().get(0);
-            int startX = b.getStart().getX();
-            float startY = b.getStart().getY();
-            int eindX = b.getEind().getX();
-            float eindY = b.getEind().getY();
-            int duurX = Math.abs(eindX - startX)/c.getXspeed();
-            float duurY = Math.abs(eindY- startY)/c.getYspeed();
-            float duur = Math.max(duurX,duurY);
-            b.setStartTijdstip(0);
-            b.setEindTijdstip((int) Math.ceil(duur));
-            solution.add(c.getBewegingLijst().get(0));
-            c.getAddedMovements().add(c.getBewegingLijst().get(0));
-            c.getBewegingLijst().remove(0);
+            if(b.getPriorityMoves().isEmpty()){
+                int startX = b.getStart().getX();
+                float startY = b.getStart().getY();
+                int eindX = b.getEind().getX();
+                float eindY = b.getEind().getY();
+                int duurX = Math.abs(eindX - startX)/c.getXspeed();
+                float duurY = Math.abs(eindY- startY)/c.getYspeed();
+                float duur = Math.max(duurX,duurY);
+                b.setStartTijdstip(0);
+                b.setEindTijdstip((int) Math.ceil(duur));
+                solution.add(c.getBewegingLijst().get(0));
+                c.getAddedMovements().add(c.getBewegingLijst().get(0));
+                c.getBewegingLijst().remove(0);
+            }
         }else {
             Beweging volgende = c.getBewegingLijst().get(0);
             if (solution.containsAll(volgende.priorityMoves)){
@@ -295,11 +297,21 @@ public class Yard {
                 }
                 Beweging temp = null;
                 boolean tempAdded = false;
+                if(volgende.priorityMoves.size() != 0 && volgende.isTussenBeweging()){
+                    int minimumTijd = Integer.MIN_VALUE;
+                    for (Beweging priority : volgende.priorityMoves){
+                        if(priority.getEindTijdstip() > minimumTijd){
+                            minimumTijd = priority.getEindTijdstip();
+                        }
+                    }
+                    volgende.setStartTijdstip(minimumTijd+1);
+                    volgende.setEindTijdstip(minimumTijd+1+(int) Math.ceil(duur));
+                }
                 for (Beweging b :solution){
                     if(b.getKraan_id() != volgende.getKraan_id()){
                         if(inSameTimeInterval(b,volgende) && isCollision(b,volgende)){
-                            volgende.setStartTijdstip(b.getEindTijdstip()+1);
-                            volgende.setEindTijdstip(b.getEindTijdstip()+1+(int) Math.ceil(duur));
+                                volgende.setStartTijdstip(b.getEindTijdstip()+1);
+                                volgende.setEindTijdstip(b.getEindTijdstip()+1+(int) Math.ceil(duur));
                         }else if(isLatestmove(b)){
                             //If crane has no movements left but collision happens
                             if(isCollision(b,volgende)){
@@ -312,8 +324,12 @@ public class Yard {
                 if (tempAdded){
                     solution.add(temp);
                     totaal++;
+
                 }
                 c.getAddedMovements().add(volgende);
+                int kraanBeweging = c.getKraanBewegingAantal()+1;
+                volgende.setKraanBeweging(kraanBeweging);
+                c.setKraanBewegingAantal(kraanBeweging);
                 solution.add(volgende);
                 c.getBewegingLijst().remove(0);
                 return totaal;
@@ -340,14 +356,17 @@ public class Yard {
                     eindX = startX + 2;
                     if (eindX>lengte){
                         //TODO check when fully implemented
-                        eindX=lengte-1;
+                        eindX=lengte;
                     }
                 }
                 duur = 2/k.getXspeed();
+                int kraanBeweging = k.getKraanBewegingAantal()+1;
                 Beweging nieuwe = new Beweging(Integer.MIN_VALUE,startTijdstip,startTijdstip+duur,matrix[startX][(int) Math.floor(startY)][0], matrix[eindX][(int) Math.floor(startY)][0],kraan_id,true);
+                nieuwe.setKraanBeweging(kraanBeweging);
                 k.setX(eindX);
                 k.setY((int) Math.ceil(startY));
                 k.getAddedMovements().add(nieuwe);
+                k.setKraanBewegingAantal(kraanBeweging);
                 return nieuwe;
             }
         }
@@ -358,7 +377,7 @@ public class Yard {
         for (Kraan k : cranes){
             if(b.getKraan_id() == k.getId()){
                 int index = k.getAddedMovements().size();
-                if(k.getAddedMovements().get(index-1).getEindTijdstip() == b.getEindTijdstip()){
+                if(k.getAddedMovements().get(index-1).getEindTijdstip() == b.getEindTijdstip() && k.getBewegingLijst().isEmpty()){
                     return  true;
                 };
             }
@@ -430,10 +449,10 @@ public class Yard {
             Kraan startKraan = null;
             Kraan eindKraan = null;
             for (Kraan k : cranes){
-                   if(k.getXmin() < mapping_id_xcoor.get(c.getSlot_id()) && k.getXmax() > mapping_id_xcoor.get(c.getSlot_id())){
+                   if(k.getXmin() <= mapping_id_xcoor.get(c.getSlot_id()) && k.getXmax() >= mapping_id_xcoor.get(c.getSlot_id())){
                        startKraan = k;
                    }
-                   if (k.getXmin() < mapping_id_xcoor.get(c.getTarget_id()) && k.getXmax() > mapping_id_xcoor.get(c.getTarget_id())){
+                   if (k.getXmin() <= mapping_id_xcoor.get(c.getTarget_id()) && k.getXmax() >= mapping_id_xcoor.get(c.getTarget_id())){
                        eindKraan = k;
                    }
             }
@@ -502,8 +521,8 @@ public class Yard {
                         temp.add(eind);
                         eind.priorityMoves.add(effec);
                         eindKraan.getBewegingLijst().add(eind);
-                        eindKraan.setX(middenX);
-                        eindKraan.setY(middenY);
+                        eindKraan.setX(eindX);
+                        eindKraan.setY(eindY);
                         test  =true;
                         break;
                     }

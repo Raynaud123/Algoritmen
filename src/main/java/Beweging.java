@@ -9,9 +9,10 @@ public class Beweging {
     private Coördinaat eind;
     private int kraan_id;
     private boolean tussenBeweging;
+    private int kraanBeweging;
     ArrayList<Beweging> priorityMoves;
 
-    public Beweging(int id,int startTijdstip,int eindTijdstip ,Coördinaat start, Coördinaat eind, int kraan_id, boolean tussenBeweging) {
+    public Beweging(int id,int startTijdstip,int eindTijdstip ,Coördinaat start, Coördinaat eind, int kraan_id ,boolean tussenBeweging) {
         this.id = id;
         this.startTijdstip = startTijdstip;
         this.eindTijdstip = eindTijdstip;
@@ -90,5 +91,21 @@ public class Beweging {
 
     public void setTussenBeweging(boolean tussenBeweging) {
         this.tussenBeweging = tussenBeweging;
+    }
+
+    public int getKraanBeweging() {
+        return kraanBeweging;
+    }
+
+    public void setKraanBeweging(int kraanBeweging) {
+        this.kraanBeweging = kraanBeweging;
+    }
+
+    public ArrayList<Beweging> getPriorityMoves() {
+        return priorityMoves;
+    }
+
+    public void setPriorityMoves(ArrayList<Beweging> priorityMoves) {
+        this.priorityMoves = priorityMoves;
     }
 }
