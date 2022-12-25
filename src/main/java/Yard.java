@@ -96,11 +96,13 @@ public class Yard {
         this.containersArray = containersArray;
         while(maxHeight != targetHeight) {
             findContainersOnHighestLevel(containersArray, maxHeight);
+            System.out.println("Containers op hoogste verdiep = " + containersOnHighestLevel.size());
             for (Container c : containersOnHighestLevel) {
 
                 int targetId = findEmptyPlace(maxHeight-2, c, containersArray);
                 if (targetId == -1) {
                     // TODO wat als geen plaats gevonden op lager verdiep
+
                 } else {
                     c.setTarget_id(targetId);
                     c.setTarget_hoogte(maxHeight-2);
@@ -433,7 +435,7 @@ public class Yard {
                    if(k.getXmin() < mapping_id_xcoor.get(c.getSlot_id()) && k.getXmax() > mapping_id_xcoor.get(c.getSlot_id())){
                        startKraan = k;
                    }
-                   if (k.getXmin() < mapping_id_xcoor.get(c.getTarget_id()) && k.getXmax() > mapping_id_xcoor.get(c.getTarget_id())){
+                   if (k.getXmin() <= mapping_id_xcoor.get(c.getTarget_id()) && k.getXmax() > mapping_id_xcoor.get(c.getTarget_id())){
                        eindKraan = k;
                    }
             }
