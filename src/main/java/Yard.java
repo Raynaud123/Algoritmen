@@ -96,11 +96,13 @@ public class Yard {
         this.containersArray = containersArray;
         while(maxHeight != targetHeight) {
             findContainersOnHighestLevel(containersArray, maxHeight);
+            System.out.println("Containers op hoogste verdiep = " + containersOnHighestLevel.size());
             for (Container c : containersOnHighestLevel) {
 
                 int targetId = findEmptyPlace(maxHeight-2, c, containersArray);
                 if (targetId == -1) {
                     // TODO wat als geen plaats gevonden op lager verdiep
+
                 } else {
                     c.setTarget_id(targetId);
                     c.setTarget_hoogte(maxHeight-2);
