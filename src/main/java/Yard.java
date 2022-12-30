@@ -23,7 +23,6 @@ public class Yard {
     ArrayList<Kraan> cranes;
     ArrayList<Container> notOnTargetId;
     ArrayList<Container> containersThatNeedToBeMoved;
-    ArrayList<Container> containersOnHighestLevel;
     ArrayList<Beweging> temp;
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
@@ -34,7 +33,6 @@ public class Yard {
         mapping_id_ycoor = new HashMap<>();
         notOnTargetId = new ArrayList<>();
         containersThatNeedToBeMoved = new ArrayList<>();
-        containersOnHighestLevel = new ArrayList<>();
         temp = new ArrayList<>();
         this.hoogte = hoogte;
         this.lengte = lengte;
@@ -99,20 +97,31 @@ public class Yard {
     //Method for when targetHeight is specified
     public void calculateMovementsTargetHeight(int maxHeight, int targetHeight, ArrayList<Container> containersArray) {
         this.containersArray = containersArray;
+        ArrayList<Container> containersOnHighestLevel;
+
         while(maxHeight != targetHeight) {
-            findContainersOnHighestLevel(containersArray, maxHeight);
+            containersOnHighestLevel = findContainersOnLevel(maxHeight-1, containersArray);
             System.out.println("Containers op hoogste verdiep = " + containersOnHighestLevel.size());
             for (Container c : containersOnHighestLevel) {
 
-                int targetId = findEmptyPlace(maxHeight-2, c, containersArray);
-                if (targetId == -1) {
-                    // TODO wat als geen plaats gevonden op lager verdiep
+                // Probeer elk verdiep tot plaats gevonden
+                int targetId = -1;
+                for (int i = 0; i<maxHeight-1; i++) {
+                    targetId = findEmptyPlace(i, c, containersArray);
+                    if (targetId != -1) break;
+                }
 
+                if (targetId == -1) {
+                    // Er is 1 situatie waarin dit kan gebeuren,
+                    // de rest is volgens mij uitgesloten door stacking constraints
+                    // Tenzij je gaat herorganiseren om gaten te creeeren
+                    System.out.println("Not succeeded in reaching targeted height");
                 } else {
                     c.setTarget_id(targetId);
                     c.setTarget_hoogte(maxHeight-2);
                     makeMovement(c);
                 }
+
             }
             maxHeight--;
         }
@@ -139,17 +148,20 @@ public class Yard {
                     }
                     // Plaats is vrij, controle op constraint voor laag eronder
                     else {
-                        int containerBelow = matrix[mapping_id_xcoor.get(idOfPossibleEmptySlot+i)][mapping_id_ycoor.get(idOfPossibleEmptySlot)][hoogte-1].getContainer_id();
+                        if (hoogte != 0) {
+                            int containerBelow = matrix[mapping_id_xcoor.get(idOfPossibleEmptySlot+i)][mapping_id_ycoor.get(idOfPossibleEmptySlot)][hoogte-1].getContainer_id();
 
-                        // Constraint 2
-                        if (hoogte-1 != 0 && (containerBelow != Integer.MIN_VALUE)) {
-                            possible = false;
-                            break;
-                        }
-                        // Constraint 3
-                        else if (hoogte-1 != 0 && c.getLength()<containersArray.get(containerBelow).getLength()) {
-                            possible = false;
-                            idEmpty = -1;
+                            // Constraint 2
+                            if (containerBelow != Integer.MIN_VALUE) {
+                                possible = false;
+                                break;
+                            }
+                            // Constraint 3
+                            else if (c.getLength()<containersArray.get(containerBelow).getLength()) {
+                                possible = false;
+                                idEmpty = -1;
+                            }
+                            else idEmpty = idOfPossibleEmptySlot;
                         }
                         else idEmpty = idOfPossibleEmptySlot;
                     }
@@ -163,10 +175,12 @@ public class Yard {
         return idEmpty;
     }
 
-    private void findContainersOnHighestLevel(ArrayList<Container> containersArray, int maxHeight) {
+    private ArrayList<Container> findContainersOnLevel(int level, ArrayList<Container> containersArray) {
+        ArrayList<Container> containersOnLevel = new ArrayList<>();
         for (Container c : containersArray) {
-            if (c.getHoogte() == maxHeight-1) containersOnHighestLevel.add(c);
+            if (c.getHoogte() == level) containersOnLevel.add(c);
         }
+        return containersOnLevel;
     }
 
 

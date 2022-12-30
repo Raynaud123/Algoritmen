@@ -39,14 +39,14 @@ public class Main extends Application {
 
         //Path ingeven
 //        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/2mh/MH2Terminal_20_10_3_2_100.json");
-//        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/4mh/MH2Terminal_20_10_3_2_160.json");
+        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/4mh/MH2Terminal_20_10_3_2_160.json");
         //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
          //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/3t/TerminalA_20_10_3_2_160.json");
         //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/5t/TerminalB_20_10_3_2_160.json");
         //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/6t/Terminal_10_10_3_1_100.json");
 //       JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/7t/TerminalC_10_10_3_2_80.json");
         //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/8t/TerminalC_10_10_3_2_80.json");
-               JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/9t/TerminalC_10_10_3_2_100.json");
+//               JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/9t/TerminalC_10_10_3_2_100.json");
 //        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/10t/TerminalC_10_10_3_2_100.json");
 //        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10.json");
         int maxHeight = 0;
@@ -183,9 +183,9 @@ public class Main extends Application {
                 background.getChildren().add(test);
             }
         }
-//        for (int i=0; i<maxHeight; i++) {
-//            new Gui("Hoogte " + i, yard, i);
-//        }
+        for (int i=0; i<maxHeight; i++) {
+            new Gui("Hoogte " + i, yard, i);
+        }
 
 
 
