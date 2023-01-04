@@ -99,8 +99,9 @@ public class Yard {
     public void calculateMovementsTargetHeight(int maxHeight, int targetHeight, ArrayList<Container> containersArray) {
         this.containersArray = containersArray;
         int level = maxHeight-1;
+        int loops = 0;
 
-        while(level != targetHeight-1) {
+        while(level != targetHeight-1 && loops < 100) {
 
             moveContainersToLowerLevel(level, true);
             if (findContainersOnLevel(level, containersArray).size() == 0) {
@@ -108,8 +109,8 @@ public class Yard {
             }
             else {
                 tryToCreateGaps();
-                level--; // dit moet weg als trytocreategaps geimplementeerd is
             }
+            loops++;
         }
 
         addTimestampsToSolution();
@@ -223,8 +224,14 @@ public class Yard {
                     }
                 }
 
-                // Hoekje op hoekje
+                // Hoekje op hoekje rechts
                 if (hoogte != 0 && x != matrix.length-c.getLength()-1 && matrix[x+c.getLength()][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()-1][y][hoogte-1].getContainer_id()) {
+                    possible = false;
+                    idEmpty = -1;
+                }
+
+                // Hoekje op hoekje links
+                if (hoogte != 0 && x != 0 && matrix[x+c.getLength()-2][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()-1][y][hoogte-1].getContainer_id()) {
                     possible = false;
                     idEmpty = -1;
                 }
