@@ -22,7 +22,7 @@ public class Coördinaat {
         this.x = x;
     }
 
-    public float getY() {
+    public int getY() {
         return y;
     }
 

@@ -16,9 +16,7 @@ import javafx.util.Duration;
 import org.json.simple.JSONArray;
 import javafx.scene.shape.Rectangle;
 import org.json.simple.JSONObject;
-import org.w3c.dom.css.Rect;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
@@ -165,9 +163,6 @@ public class Main extends Application {
 
 
                     }
-
-
-
                 }
             }
         }

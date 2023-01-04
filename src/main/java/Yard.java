@@ -24,6 +24,7 @@ public class Yard {
     ArrayList<Container> notOnTargetId;
     ArrayList<Container> containersThatNeedToBeMoved;
     ArrayList<Beweging> temp;
+    Boolean changed;
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
 
@@ -39,7 +40,7 @@ public class Yard {
         this.breedte = breedte;
         cranes = new ArrayList<>();
         solution = new ArrayList<>();
-
+        changed = false;
 
         matrix = new Coördinaat[lengte][breedte][hoogte];
         for (Object o : slots) {
@@ -97,36 +98,78 @@ public class Yard {
     //Method for when targetHeight is specified
     public void calculateMovementsTargetHeight(int maxHeight, int targetHeight, ArrayList<Container> containersArray) {
         this.containersArray = containersArray;
-        ArrayList<Container> containersOnHighestLevel;
+        int level = maxHeight-1;
 
         while(maxHeight != targetHeight) {
-            containersOnHighestLevel = findContainersOnLevel(maxHeight-1, containersArray);
-            System.out.println("Containers op hoogste verdiep = " + containersOnHighestLevel.size());
-            for (Container c : containersOnHighestLevel) {
 
-                // Probeer elk verdiep tot plaats gevonden
-                int targetId = -1;
-                for (int i = 0; i<maxHeight-1; i++) {
-                    targetId = findEmptyPlace(i, c, containersArray);
-                    if (targetId != -1) break;
-                }
-
-                if (targetId == -1) {
-                    // Er is 1 situatie waarin dit kan gebeuren,
-                    // de rest is volgens mij uitgesloten door stacking constraints
-                    // Tenzij je gaat herorganiseren om gaten te creeeren
-                    System.out.println("Not succeeded in reaching targeted height");
-                } else {
-                    c.setTarget_id(targetId);
-                    c.setTarget_hoogte(maxHeight-2);
-                    makeMovement(c);
-                }
-
-            }
+            moveContainersToLowerLevel(level, true);
             maxHeight--;
         }
 
         addTimestampsToSolution();
+    }
+
+    private void moveContainersToLowerLevel(int level, boolean isHighestLevel) {
+        ArrayList<Container> containersOnLevel;
+        containersOnLevel = findContainersOnLevel(level, containersArray);
+        int counter = 0;
+
+        for (Container c : containersOnLevel) {
+
+            // Probeer elk verdiep tot plaats gevonden
+            int targetId = -1;
+            int targetHeight = -1;
+            for (int i = 0; i<level; i++) {
+                targetId = findEmptyPlace(i, c, containersArray);
+                targetHeight = i;
+                if (targetId != -1) break;
+            }
+
+            if (targetId == -1) {
+                if (level != 0) {
+                    if (isHighestLevel) {
+                        changed = false;
+                        moveContainersToLowerLevel(level - 1, false);
+                        if (changed) moveContainersToLowerLevel(level, true);
+                        else System.out.println("No solution found");
+                    }
+                    else if (counter == containersOnLevel.size()){
+                        moveContainersToLowerLevel(level - 1, false);
+                    }
+                }
+                else {
+                    System.out.println("Zit op het verdiep 0, dus kan niet lager");
+                    break;
+                }
+            }
+            else {
+                // Hier al id toewijzen zodat geen tweede beweging naar dat slot kan
+                c.setTarget_id(targetId);
+                Coördinaat nuBezet = getFromTargetId(targetId, targetHeight);
+                int bezetteX = nuBezet.getX();
+                int bezetteY = nuBezet.getY();
+                for (int i=bezetteX; i<bezetteX+c.getLength(); i++) {
+                    matrix[i][bezetteY][targetHeight].setContainer_id(c.getId());
+                }
+                c.setTarget_hoogte(targetHeight);
+                makeMovement(c);
+                changed = true;
+                System.out.println("Container " + c.getId());
+                System.out.println("DE TARGET X, Y, Z: " + bezetteX + ", " + bezetteY + ", " + targetHeight);
+            }
+            counter++;
+        }
+    }
+
+    private Coördinaat getFromTargetId(int targetId, int hoogte) {
+        for (int i=0; i<matrix.length; i++) {
+            for (int j=0; j<matrix[i].length; j++) {
+                if (matrix[i][j][hoogte].getId() == targetId) {
+                    return matrix[i][j][hoogte];
+                }
+            }
+        }
+        return null;
     }
 
     private int findEmptyPlace(int hoogte, Container c, ArrayList<Container> containersArray) {
@@ -152,7 +195,7 @@ public class Yard {
                             int containerBelow = matrix[mapping_id_xcoor.get(idOfPossibleEmptySlot+i)][mapping_id_ycoor.get(idOfPossibleEmptySlot)][hoogte-1].getContainer_id();
 
                             // Constraint 2
-                            if (containerBelow != Integer.MIN_VALUE) {
+                            if (containerBelow == Integer.MIN_VALUE) {
                                 possible = false;
                                 break;
                             }
@@ -167,18 +210,24 @@ public class Yard {
                     }
                 }
 
+                // Hoekje op hoekje
+                if (hoogte != 0 && x != matrix.length-c.getLength()-1 && matrix[x+c.getLength()+1][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()][y][hoogte-1].getContainer_id()) {
+                    possible = false;
+                    idEmpty = -1;
+                }
+
                 if (possible) {
                     return idEmpty;
                 }
             }
         }
-        return idEmpty;
+        return -1;
     }
 
     private ArrayList<Container> findContainersOnLevel(int level, ArrayList<Container> containersArray) {
         ArrayList<Container> containersOnLevel = new ArrayList<>();
         for (Container c : containersArray) {
-            if (c.getHoogte() == level) containersOnLevel.add(c);
+            if (c.getHoogte() == level && c.getTarget_hoogte() == Integer.MIN_VALUE) containersOnLevel.add(c);
         }
         return containersOnLevel;
     }
