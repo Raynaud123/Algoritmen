@@ -6,7 +6,7 @@ import java.util.*;
 //TODO: Container effectief verplaatsen
 //TODO: GUI aanpassen container beweegt mee
 //TODO: Crossover bug fixen
-//TODO: Als geen plaats op verdieping lager
+//TODO: Als geen plaats op verdieping lager -> gaten creeëren
 
 public class Yard {
 
@@ -100,13 +100,23 @@ public class Yard {
         this.containersArray = containersArray;
         int level = maxHeight-1;
 
-        while(maxHeight != targetHeight) {
+        while(level != targetHeight-1) {
 
             moveContainersToLowerLevel(level, true);
-            maxHeight--;
+            if (findContainersOnLevel(level, containersArray).size() == 0) {
+                level--;
+            }
+            else {
+                tryToCreateGaps();
+                level--; // dit moet weg als trytocreategaps geimplementeerd is
+            }
         }
 
         addTimestampsToSolution();
+    }
+
+    private void tryToCreateGaps() {
+        // TODO implement
     }
 
     private void moveContainersToLowerLevel(int level, boolean isHighestLevel) {
@@ -116,48 +126,51 @@ public class Yard {
 
         for (Container c : containersOnLevel) {
 
-            // Probeer elk verdiep tot plaats gevonden
-            int targetId = -1;
-            int targetHeight = -1;
-            for (int i = 0; i<level; i++) {
-                targetId = findEmptyPlace(i, c, containersArray);
-                targetHeight = i;
-                if (targetId != -1) break;
-            }
+            if (c.getHoogte() == level && c.getTarget_hoogte() == Integer.MIN_VALUE) {
+                // Probeer elk verdiep tot plaats gevonden
+                int targetId = -1;
+                int targetHeight = -1;
+                for (int i = 0; i<level; i++) {
+                    targetId = findEmptyPlace(i, c, containersArray);
+                    targetHeight = i;
+                    if (targetId != -1) break;
+                }
 
-            if (targetId == -1) {
-                if (level != 0) {
-                    if (isHighestLevel) {
-                        changed = false;
-                        moveContainersToLowerLevel(level - 1, false);
-                        if (changed) moveContainersToLowerLevel(level, true);
-                        else System.out.println("No solution found");
+                if (targetId == -1) {
+                    if (level != 0) {
+                        if (isHighestLevel) {
+                            changed = false;
+                            moveContainersToLowerLevel(level - 1, false);
+                            if (changed) moveContainersToLowerLevel(level, true);
+                            else System.out.println("No solution found");
+                        }
+                        else if (counter == containersOnLevel.size()){
+                            moveContainersToLowerLevel(level - 1, false);
+                        }
                     }
-                    else if (counter == containersOnLevel.size()){
-                        moveContainersToLowerLevel(level - 1, false);
+                    else {
+                        System.out.println("Zit op het verdiep 0, dus kan niet lager");
+                        break;
                     }
                 }
                 else {
-                    System.out.println("Zit op het verdiep 0, dus kan niet lager");
-                    break;
+                    // Hier al id toewijzen zodat geen tweede beweging naar dat slot kan
+                    c.setTarget_id(targetId);
+                    Coördinaat nuBezet = getFromTargetId(targetId, targetHeight);
+                    assert nuBezet != null;
+                    int bezetteX = nuBezet.getX();
+                    int bezetteY = nuBezet.getY();
+                    for (int i=bezetteX; i<bezetteX+c.getLength(); i++) {
+                        matrix[i][bezetteY][targetHeight].setContainer_id(c.getId());
+                    }
+                    c.setTarget_hoogte(targetHeight);
+                    makeMovement(c);
+                    changed = true;
+                    System.out.println("Container " + c.getId());
+                    System.out.println("DE TARGET X, Y, Z: " + bezetteX + ", " + bezetteY + ", " + targetHeight);
                 }
+                counter++;
             }
-            else {
-                // Hier al id toewijzen zodat geen tweede beweging naar dat slot kan
-                c.setTarget_id(targetId);
-                Coördinaat nuBezet = getFromTargetId(targetId, targetHeight);
-                int bezetteX = nuBezet.getX();
-                int bezetteY = nuBezet.getY();
-                for (int i=bezetteX; i<bezetteX+c.getLength(); i++) {
-                    matrix[i][bezetteY][targetHeight].setContainer_id(c.getId());
-                }
-                c.setTarget_hoogte(targetHeight);
-                makeMovement(c);
-                changed = true;
-                System.out.println("Container " + c.getId());
-                System.out.println("DE TARGET X, Y, Z: " + bezetteX + ", " + bezetteY + ", " + targetHeight);
-            }
-            counter++;
         }
     }
 
@@ -211,7 +224,7 @@ public class Yard {
                 }
 
                 // Hoekje op hoekje
-                if (hoogte != 0 && x != matrix.length-c.getLength()-1 && matrix[x+c.getLength()+1][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()][y][hoogte-1].getContainer_id()) {
+                if (hoogte != 0 && x != matrix.length-c.getLength()-1 && matrix[x+c.getLength()][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()-1][y][hoogte-1].getContainer_id()) {
                     possible = false;
                     idEmpty = -1;
                 }
