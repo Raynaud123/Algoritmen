@@ -101,7 +101,7 @@ public class Yard {
         int level = maxHeight-1;
         int loops = 0;
 
-        while(level != targetHeight-1 && loops < 100) {
+        while(level != targetHeight-1 && loops < 50) {
 
             moveContainersToLowerLevel(level, true);
             if (findContainersOnLevel(level, containersArray).size() == 0) {
@@ -231,7 +231,7 @@ public class Yard {
                 }
 
                 // Hoekje op hoekje links
-                if (hoogte != 0 && x != 0 && matrix[x+c.getLength()-2][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()-1][y][hoogte-1].getContainer_id()) {
+                if (hoogte != 0 && x != 0 && matrix[x][y][hoogte-1].getContainer_id() == matrix[x-1][y][hoogte-1].getContainer_id()) {
                     possible = false;
                     idEmpty = -1;
                 }
