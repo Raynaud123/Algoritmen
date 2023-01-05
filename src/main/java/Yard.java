@@ -4,7 +4,6 @@ import org.json.simple.JSONObject;
 import java.util.*;
 
 //TODO: Container effectief verplaatsen
-//TODO: GUI aanpassen container beweegt mee
 //TODO: Crossover bug fixen
 //TODO: Als geen plaats op verdieping lager -> gaten creeëren
 
@@ -225,7 +224,7 @@ public class Yard {
                 }
 
                 // Hoekje op hoekje rechts
-                if (hoogte != 0 && x != matrix.length-c.getLength()-1 && matrix[x+c.getLength()][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()-1][y][hoogte-1].getContainer_id()) {
+                if (hoogte != 0 && x != matrix.length-c.getLength()-1 && matrix[x+c.getLength()-1][y][hoogte-1].getContainer_id() == matrix[x+c.getLength()][y][hoogte-1].getContainer_id()) {
                     possible = false;
                     idEmpty = -1;
                 }
@@ -828,6 +827,7 @@ public class Yard {
 
     private boolean feasible(int i, int j, int h, Container c) {
         int count = 0;
+        boolean possible = true;
         int idOfPossibleEmptySlot = matrix[i][j][h].getId();
         for (int k = 0; k < c.getLength(); k++){
                 if (matrix[i+k][j][h].getContainer_id()==Integer.MIN_VALUE){
@@ -835,11 +835,14 @@ public class Yard {
                         int containerBelow = matrix[mapping_id_xcoor.get(idOfPossibleEmptySlot+k)][mapping_id_ycoor.get(idOfPossibleEmptySlot)][h-1].getContainer_id();
                         // Constraint 2
                         if (h-1 != 0 && (containerBelow == Integer.MIN_VALUE)) {
+                            possible = false;
                             break;
                         }
+
                         // Constraint 3
                         //TODO: klopt constraint?
                         if (h-1 != 0 && c.getLength()< containersArray.get(containerBelow).getLength()) {
+                            possible = false;
                             break;
                         }else {
                             count++;
@@ -849,7 +852,23 @@ public class Yard {
                     }
                 }
             }
-        return count == c.getLength();
+        // Hoekje op hoekje rechts
+        if (h != 0 && i != matrix.length-c.getLength()-1 && matrix[i+c.getLength()-1][j][h-1].getContainer_id() == matrix[i+c.getLength()][j][h-1].getContainer_id()) {
+            possible = false;
+        }
+
+        // Hoekje op hoekje links
+        if (h != 0 && i != 0 && matrix[i][j][h-1].getContainer_id() == matrix[i-1][j][h-1].getContainer_id()) {
+            possible = false;
+        }
+
+
+        if(possible){
+            return count == c.getLength();
+        }else {
+            return possible;
+        }
+
     }
 
 
