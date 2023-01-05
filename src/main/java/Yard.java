@@ -316,7 +316,7 @@ public class Yard {
 
         Beweging nieuwe = new Beweging(Integer.MIN_VALUE,0,duur,matrix[startX][(int) Math.floor(startY)][0], matrix[eindX][(int) Math.floor(startY)][0],kraan.getId(),true);
         kraan.setX(eindX);
-        kraan.setY((int) Math.ceil(startY));
+        kraan.setY((int) Math.floor(startY));
         kraan.getAddedMovements().add(nieuwe);
         return nieuwe;
     }
@@ -333,7 +333,7 @@ public class Yard {
         for (int i = 0; i < this.hoogte; i++){
             int hit = 0;
             for (int j = 0; j < c.getLength(); j++){
-                if (matrix[eindX+j][(int) Math.ceil(eindY)][i].getContainer_id() == Integer.MIN_VALUE){
+                if (matrix[eindX+j][(int) Math.floor(eindY)][i].getContainer_id() == Integer.MIN_VALUE){
                     hit++;
                 }
             }
@@ -471,9 +471,9 @@ public class Yard {
                           float duurY = Math.abs(startY-eindY)/k.getYspeed();
                           duur = Math.max(duurX,(int) Math.ceil(duurY));
                          int kraanBeweging = k.getKraanBewegingAantal()+1;
-                          nieuw = new Beweging(Integer.MIN_VALUE,lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.ceil(eindY)][hoogte-1],k.getId(),true);
+                          nieuw = new Beweging(Integer.MIN_VALUE,lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.floor(eindY)][hoogte-1],k.getId(),true);
                           volgende.getStart().setX(eindX);
-                          volgende.getStart().setY((int) Math.ceil(eindY));
+                          volgende.getStart().setY((int) Math.floor(eindY));
                           if(b.getEindTijdstip()>nieuw.getEindTijdstip()){
                               volgende.setStartTijdstip(b.getEindTijdstip());
                           }else {
@@ -489,7 +489,7 @@ public class Yard {
                          volgende.setEindTijdstip(volgende.getStartTijdstip()+duur);
                           nieuw.setKraanBeweging(kraanBeweging);
                          k.setX(eindX);
-                         k.setY((int) Math.ceil(eindY));
+                         k.setY((int) Math.floor(eindY));
                          k.getAddedMovements().add(nieuw);
                          k.setKraanBewegingAantal(kraanBeweging);
                          return nieuw;
@@ -503,9 +503,9 @@ public class Yard {
                          float duurY = Math.abs(startY-eindY)/k.getYspeed();
                          duur = Math.max(duurX,(int) Math.ceil(duurY));
                          int kraanBeweging = k.getKraanBewegingAantal()+1;
-                         nieuw = new Beweging(Integer.MIN_VALUE,lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.ceil(eindY)][hoogte-1],k.getId(),true);
+                         nieuw = new Beweging(Integer.MIN_VALUE,lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.floor(eindY)][hoogte-1],k.getId(),true);
                          volgende.getStart().setX(eindX);
-                         volgende.getStart().setY((int) Math.ceil(eindY));
+                         volgende.getStart().setY((int) Math.floor(eindY));
                          if(b.getEindTijdstip()>nieuw.getEindTijdstip()){
                              volgende.setStartTijdstip(b.getEindTijdstip());
                          }else {
@@ -521,7 +521,7 @@ public class Yard {
                          volgende.setEindTijdstip(volgende.getStartTijdstip()+duur);
                          nieuw.setKraanBeweging(kraanBeweging);
                          k.setX(eindX);
-                         k.setY((int) Math.ceil(eindY));
+                         k.setY((int) Math.floor(eindY));
                          k.getAddedMovements().add(nieuw);
                          k.setKraanBewegingAantal(kraanBeweging);
                          return nieuw;
@@ -549,9 +549,9 @@ public class Yard {
                         float duurY = Math.abs(startY-eindY)/k.getYspeed();
                         duur = Math.max(duurX,(int) Math.ceil(duurY));
                         int kraanBeweging = k.getKraanBewegingAantal()+1;
-                        nieuw = new Beweging(volgende.getId(),lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.ceil(eindY)][hoogte-1],k.getId(),false);
+                        nieuw = new Beweging(volgende.getId(),lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.floor(eindY)][hoogte-1],k.getId(),false);
                         volgende.getStart().setX(eindX);
-                        volgende.getStart().setY((int) Math.ceil(eindY));
+                        volgende.getStart().setY((int) Math.floor(eindY));
                         if(b.getEindTijdstip()>nieuw.getEindTijdstip()){
                             volgende.setStartTijdstip(b.getEindTijdstip());
                         }else {
@@ -567,7 +567,7 @@ public class Yard {
                         volgende.setEindTijdstip(volgende.getStartTijdstip()+duur);
                         nieuw.setKraanBeweging(kraanBeweging);
                         k.setX(eindX);
-                        k.setY((int) Math.ceil(eindY));
+                        k.setY((int) Math.floor(eindY));
                         k.getAddedMovements().add(nieuw);
                         k.setKraanBewegingAantal(kraanBeweging);
                         return nieuw;
@@ -581,9 +581,9 @@ public class Yard {
                         float duurY = Math.abs(startY-eindY)/k.getYspeed();
                         duur = Math.max(duurX,(int) Math.ceil(duurY));
                         int kraanBeweging = k.getKraanBewegingAantal()+1;
-                        nieuw = new Beweging(volgende.getId(),lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.ceil(eindY)][hoogte-1],k.getId(),false);
+                        nieuw = new Beweging(volgende.getId(),lastMovement.getEindTijdstip()+1,lastMovement.getEindTijdstip()+1+duur, volgende.getStart(),matrix[eindX][(int) Math.floor(eindY)][hoogte-1],k.getId(),false);
                         volgende.getStart().setX(eindX);
-                        volgende.getStart().setY((int) Math.ceil(eindY));
+                        volgende.getStart().setY((int) Math.floor(eindY));
                         if(b.getEindTijdstip()>nieuw.getEindTijdstip()){
                             volgende.setStartTijdstip(b.getEindTijdstip());
                         }else {
@@ -599,7 +599,7 @@ public class Yard {
                         volgende.setEindTijdstip(volgende.getStartTijdstip()+duur);
                         nieuw.setKraanBeweging(kraanBeweging);
                         k.setX(eindX);
-                        k.setY((int) Math.ceil(eindY));
+                        k.setY((int) Math.floor(eindY));
                         k.getAddedMovements().add(nieuw);
                         k.setKraanBewegingAantal(kraanBeweging);
                         return nieuw;
@@ -640,7 +640,7 @@ public class Yard {
                 Beweging nieuwe = new Beweging(Integer.MIN_VALUE,startTijdstip,startTijdstip+duur,matrix[startX][(int) Math.floor(startY)][0], matrix[eindX][(int) Math.floor(startY)][0],kraan_id,true);
                 nieuwe.setKraanBeweging(kraanBeweging);
                 k.setX(eindX);
-                k.setY((int) Math.ceil(startY));
+                k.setY((int) Math.floor(startY));
                 k.getAddedMovements().add(nieuwe);
                 k.setKraanBewegingAantal(kraanBeweging);
                 return nieuwe;
