@@ -258,7 +258,7 @@ public class Yard {
         this.containersArray = containersArray;
         for (Container c : containersArray) {
             if(notOnTargetId.contains(c)){
-                checkTargetId(c, containersArray);
+                checkTargetId(c);
             }
         }
         boolean opnieuw = true;
@@ -318,29 +318,6 @@ public class Yard {
         kraan.setY((int) Math.floor(startY));
         kraan.getAddedMovements().add(nieuwe);
         return nieuwe;
-    }
-
-
-    private int calculateHoogte(int eindX, float eindY,Coördinaat start, int id) {
-        int hoogte = 0;
-        Container c = null;
-        for (Container cont: containersArray){
-            if (cont.getId() == id){
-                c = cont;
-            }
-        }
-        for (int i = 0; i < this.hoogte; i++){
-            int hit = 0;
-            for (int j = 0; j < c.getLength(); j++){
-                if (matrix[eindX+j][(int) Math.floor(eindY)][i].getContainer_id() == Integer.MIN_VALUE){
-                    hit++;
-                }
-            }
-            if (hit == c.getLength()){
-                hoogte = i;
-            }
-        }
-        return  hoogte;
     }
 
 
@@ -443,10 +420,6 @@ public class Yard {
         return totaal;
     }
 
-    private Beweging moveKraanCrossOverLatest(Beweging b, Beweging volgende) {
-        //TODO nog te implementeren indien tijd
-        return null;
-    }
 
     private Beweging moveCrossOverKraan(Beweging b, Beweging volgende) {
         Beweging nieuw = null;
@@ -723,10 +696,6 @@ public class Yard {
 
 
             for (Kraan kraan : availableCranes){
-//                if (kraan.getBewegingLijst().size() < grootte){
-//                    grootte = kraan.getBewegingLijst().size();
-//                    kleinst = kraan;
-//                }
                 if(Math.abs(eindX - kraan.getX()) < grootte){
                     grootte = Math.abs(eindX - kraan.getX());
                     kleinst = kraan;
@@ -736,10 +705,6 @@ public class Yard {
             addMovement(c,kleinst);
         }
         else if(availableCranes.size()==0){
-
-            System.out.println("No cranes");
-            System.out.println(c);
-            //TODO implement noCranesTakeFullMovement, wss extra containers toevoegen aan containersthatneedtobemoved
             Kraan startKraan = null;
             Kraan eindKraan = null;
             for (Kraan k : cranes){
@@ -808,12 +773,24 @@ public class Yard {
                         System.out.println("start" + startKraan.getId());
                         System.out.println("eind" + eindKraan.getId());
 
-                        Beweging eind = new Beweging(c.getId(),0,0,matrix[i][j][h],matrix[eindX][eindY][0],eindKraan.getId(),false);
+                        if(!feasible(eindX,eindY,c.getTarget_hoogte(),c)){
+                            checkTargetId(c);
+                        }
+
+                        Beweging eind = new Beweging(c.getId(),0,0,matrix[i][j][h],matrix[eindX][eindY][c.getTarget_hoogte()],eindKraan.getId(),false);
                         temp.add(eind);
                         eind.priorityMoves.add(effec);
                         eindKraan.getBewegingLijst().add(eind);
                         eindKraan.setX(eindX);
                         eindKraan.setY(eindY);
+                        eindKraan.setZ(c.getTarget_hoogte());
+                        int slot_id = matrix[eindX][eindY][0].getId();
+                        for(int k = 0; k < c.getLength(); k++){
+                            matrix[eindX+k][eindY][c.getTarget_hoogte()].setContainer_id(c.getId());
+                            matrix[startX+k][startY][c.getHoogte()].setContainer_id(Integer.MIN_VALUE);
+                        }
+                        c.setSlot_id(slot_id);
+                        c.setHoogte(c.getTarget_hoogte());
                         test  =true;
                         break;
                     }
@@ -828,11 +805,10 @@ public class Yard {
     private boolean feasible(int i, int j, int h, Container c) {
         int count = 0;
         boolean possible = true;
-        int idOfPossibleEmptySlot = matrix[i][j][h].getId();
         for (int k = 0; k < c.getLength(); k++){
                 if (matrix[i+k][j][h].getContainer_id()==Integer.MIN_VALUE){
                     if (h != 0){
-                        int containerBelow = matrix[mapping_id_xcoor.get(idOfPossibleEmptySlot+k)][mapping_id_ycoor.get(idOfPossibleEmptySlot)][h-1].getContainer_id();
+                        int containerBelow = matrix[i+k][j][h-1].getContainer_id();
                         // Constraint 2
                         if (h-1 != 0 && (containerBelow == Integer.MIN_VALUE)) {
                             possible = false;
@@ -853,7 +829,7 @@ public class Yard {
                 }
             }
         // Hoekje op hoekje rechts
-        if (h != 0 && i != matrix.length-c.getLength()-1 && matrix[i+c.getLength()-1][j][h-1].getContainer_id() == matrix[i+c.getLength()][j][h-1].getContainer_id()) {
+        if (h != 0 && i+c.getLength() != lengte &&i != matrix.length-c.getLength()-1 && matrix[i+c.getLength()-1][j][h-1].getContainer_id() == matrix[i+c.getLength()][j][h-1].getContainer_id()) {
             possible = false;
         }
 
@@ -886,18 +862,24 @@ public class Yard {
             kraan.setY(startY);
             kraan.setZ(c.getHoogte());
         }
-
         Beweging effec = new Beweging(c.getId(),0,0,matrix[startX][startY][c.getHoogte()],matrix[eindX][eindY][c.getTarget_hoogte()],kraan.getId(),false);
         temp.add(effec);
         kraan.getBewegingLijst().add(effec);
         kraan.setX(eindX);
         kraan.setY(eindY);
         kraan.setZ(c.getTarget_hoogte());
+        int slot_id = matrix[eindX][eindY][0].getId();
+        for(int i = 0; i < c.getLength(); i++){
+            matrix[eindX+i][eindY][c.getTarget_hoogte()].setContainer_id(c.getId());
+            matrix[startX+i][startY][c.getHoogte()].setContainer_id(Integer.MIN_VALUE);
+        }
+        c.setSlot_id(slot_id);
+        c.setHoogte(c.getTarget_hoogte());
     }
 
 
 
-    private boolean checkTargetId(Container c, ArrayList<Container> containersArray) {
+    private boolean checkTargetId(Container c) {
         int x = mapping_id_xcoor.get(c.getTarget_id());
         int y = mapping_id_ycoor.get(c.getTarget_id());
         for (int i = 0; i < hoogte; i++){
@@ -930,8 +912,6 @@ public class Yard {
             notOnTargetId.add(indexCont,c);
             return true;
         }
-        //TODO: Implement, if not on target id  in arraylist containerstobemoved, done I think?
-        //return false;
     }
 
     private boolean checkIfContainerFreeToMove(Container c, ArrayList<Container> containersArray ) {
