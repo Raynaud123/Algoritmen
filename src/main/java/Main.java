@@ -46,10 +46,10 @@ public class Main extends Application {
             String outputFilePath = parameters.getRaw().get(1);
 
             //Path ingeven
-//        JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/2mh/MH2Terminal_20_10_3_2_100.json");
-            JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/4mh/MH2Terminal_20_10_3_2_160.json");
+       //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/2mh/MH2Terminal_20_10_3_2_100.json");
+//            JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/4mh/MH2Terminal_20_10_3_2_160.json");
             //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/TerminalA_20_10_3_2_100.json");
-            //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/3t/TerminalA_20_10_3_2_160.json");
+            JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/3t/TerminalA_20_10_3_2_160.json");
             //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/5t/TerminalB_20_10_3_2_160.json");
             //JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/6t/Terminal_10_10_3_1_100.json");
 //       JSONObject data = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/7t/TerminalC_10_10_3_2_80.json");
@@ -83,12 +83,12 @@ public class Main extends Application {
             } else {
                 //        JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/Voorbeeld1/terminal22_1_100_1_10target.json");
                 //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/1t/targetTerminalA_20_10_3_2_100.json");
-                //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/3t/targetTerminalA_20_10_3_2_160.json");
+                JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/3t/targetTerminalA_20_10_3_2_160.json");
                 //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/5t/targetTerminalB_20_10_3_2_160UPDATE.json");
                 //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/6t/targetTerminal_10_10_3_1_100.json");
                 //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/7t/targetTerminalC_10_10_3_2_80.json");
                 //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/8t/targetTerminalC_10_10_3_2_80.json");
-                JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/9t/targetTerminalC_10_10_3_2_100.json");
+                //JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/9t/targetTerminalC_10_10_3_2_100.json");
 //         JSONObject target = Inlezer.inlezenJSON(System.getProperty("user.dir") + "/src/Inputs/10t/targetTerminalC_10_10_3_2_100.json");
                 targetassignments = (JSONArray) target.get("assignments");
             }
@@ -176,17 +176,19 @@ public class Main extends Application {
             for (int i = 0; i < yard.getLengte(); i++) {
                 for (int j = 0; j < yard.getBreedte(); j++) {
                     Text text = new Text("slot-id:" + yard.getMatrix()[i][j][0].getId());
+                    text.setViewOrder(2);
                     int lengteContainer = 1200 / yard.getLengte();
                     int breedteContainer = 700 / yard.getBreedte();
                     HBox test = new HBox(text);
                     test.setLayoutX(lengteContainer * i);
                     test.setLayoutY(breedteContainer * j);
+                    test.setViewOrder(2);
                     background.getChildren().add(test);
                 }
             }
-            for (int i = 0; i < maxHeight; i++) {
-                new Gui("Hoogte " + i, yard, i);
-            }
+//            for (int i = 0; i < maxHeight; i++) {
+//                new Gui("Hoogte " + i, yard, i);
+//            }
 
 
             HBox pane = new HBox(background);
@@ -266,16 +268,44 @@ public class Main extends Application {
                             kraanTimeLine.getKeyFrames().add(kfs);
                             grijperTimeLine.getKeyFrames().add(gfs);
                         } else {
+                            Timeline containersTimeLine = new Timeline();
                             int eindX = b.getEind().getX();
                             float eindY = b.getEind().getY();
+                            int startX = b.getStart().getX();
+                            float startY = b.getStart().getY();
+                            StackPane container = (StackPane) background.lookup("#c" + b.getId());
+
                             final KeyValue ks = new KeyValue(kraan.translateXProperty(), eindX * lengte);
                             final KeyFrame kfs = new KeyFrame(Duration.seconds(b.getEindTijdstip()), ks);
                             final KeyValue gsx = new KeyValue(grijper.translateXProperty(), eindX * lengte);
                             final KeyValue gsy = new KeyValue(grijper.translateYProperty(), eindY * breedte + 0.5);
                             final KeyFrame gfs = new KeyFrame(Duration.seconds(b.getEindTijdstip()), gsx, gsy);
-//
+
+
+
+                            containersTimeLine.setDelay(Duration.seconds(b.getStartTijdstip()-1));
+//                            final KeyValue csxW = new KeyValue(container.translateXProperty(), startX*lengte);
+//                            final KeyValue csyW = new KeyValue(container.translateYProperty(), startY*breedte);
+//                            final KeyValue csvW = new KeyValue(container.viewOrderProperty(), container.getViewOrder());
+//                            final KeyFrame cfsW = new KeyFrame(Duration.seconds(b.getStartTijdstip()-1), csxW, csyW,csvW);
+                            //containersTimeLine.getKeyFrames().add(cfsW);
+
+                            final KeyValue csvB = new KeyValue(container.viewOrderProperty(), 1);
+                            final KeyFrame cfsB = new KeyFrame(Duration.seconds(b.getEindTijdstip()-1-b.getStartTijdstip()),csvB);
+                            containersTimeLine.getKeyFrames().add(cfsB);
+                            VBox vBox =(VBox) container.getChildren().get(1);
+                            HBox hBox = (HBox) vBox.getChildren().get(1);
+                            Text hoogte = (Text) hBox.getChildren().get(0);
+                            final KeyValue csxS = new KeyValue(container.translateXProperty(), eindX * lengte);
+                            final KeyValue csyS = new KeyValue(container.translateYProperty(), eindY * breedte);
+                            final KeyValue csvS = new KeyValue(container.viewOrderProperty(), Integer.MAX_VALUE - b.getEind().getZ());
+                            final KeyValue tsvS = new KeyValue(hoogte.textProperty(),"hoogte: "  + b.getEind().getZ());
+                            final KeyFrame cfs = new KeyFrame(Duration.seconds(b.getEindTijdstip()+1-b.getStartTijdstip()), csxS, csyS,csvS,tsvS);
+
                             kraanTimeLine.getKeyFrames().add(kfs);
                             grijperTimeLine.getKeyFrames().add(gfs);
+                            containersTimeLine.getKeyFrames().add(cfs);
+                            sequence.getChildren().add(containersTimeLine);
                         }
                     }
 
@@ -300,11 +330,6 @@ public class Main extends Application {
                 }
             });
 
-
-//        for (Kraan k : yard.cranes){
-//            System.out.println(k.getId() + ": " + k.getBewegingLijst());
-//            System.out.println();
-//        }
 
             for (Beweging b : yard.solution) {
                 if (b.getKraan_id() == 0) {
@@ -346,7 +371,6 @@ public class Main extends Application {
     }
 
     private StackPane createRectangle(int yardLengte, int yardBreedte, int x, int y, int h, Color randomColor, Container c, int priority) {
-        int container_length = c.getLength();
         int lengteContainer = 1200 / yardLengte;
         int breedteContainer = 700 / yardBreedte;
         Rectangle nieuw = new Rectangle(lengteContainer*c.getLength(),breedteContainer);
@@ -359,9 +383,10 @@ public class Main extends Application {
         hope.setAlignment(Pos.CENTER);
         final StackPane stack = new StackPane();
         stack.setViewOrder(priority);
-        stack.setLayoutX(x*lengteContainer);
-        stack.setLayoutY(y*breedteContainer);
+        stack.setTranslateX(x*lengteContainer);
+        stack.setTranslateY(y*breedteContainer);
         stack.getChildren().addAll(nieuw,hope);
+        stack.setId("c" + c.getId());
         return stack;
     }
 }
