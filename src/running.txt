@@ -1,0 +1,7 @@
+Java Version: At least Java 18
+
+To execute the jar, there are 2 possibilities:
+-targetAssignments
+java -jar terminal.jar [inputfile][targetfile][outputfile]
+-MaxHeight
+java -jar terminal.jar [inputfile] [outputfile]
