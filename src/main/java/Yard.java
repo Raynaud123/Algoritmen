@@ -3,13 +3,11 @@ import org.json.simple.JSONObject;
 
 import java.util.*;
 
-//TODO: Container effectief verplaatsen
 //TODO: Crossover bug fixen
 //TODO: Als geen plaats op verdieping lager -> gaten creeëren
 
 public class Yard {
 
-    //We can possibly use stack as height
     Coördinaat[][][] matrix;
     int hoogte;
     int lengte;
@@ -17,6 +15,7 @@ public class Yard {
     ArrayList<Beweging> solution;
     //Mapping between id en x-cöordinaat
     HashMap<Integer,Integer> mapping_id_xcoor;
+    //Mapping between id en y-cöordinaat
     HashMap<Integer,Integer> mapping_id_ycoor;
     ArrayList<Container> containersArray;
     ArrayList<Kraan> cranes;
@@ -27,7 +26,6 @@ public class Yard {
 
     public void createYard(JSONArray slots, int lengte, int breedte, int hoogte){
 
-        //TODO: Stacking constraints
 
         mapping_id_xcoor = new HashMap<>();
         mapping_id_ycoor = new HashMap<>();
@@ -149,7 +147,6 @@ public class Yard {
                         }
                     }
                     else {
-                        System.out.println("Zit op het verdiep 0, dus kan niet lager");
                         break;
                     }
                 }
@@ -166,8 +163,6 @@ public class Yard {
                     c.setTarget_hoogte(targetHeight);
                     makeMovement(c);
                     changed = true;
-                    System.out.println("Container " + c.getId());
-                    System.out.println("DE TARGET X, Y, Z: " + bezetteX + ", " + bezetteY + ", " + targetHeight);
                 }
                 counter++;
             }
@@ -269,12 +264,10 @@ public class Yard {
                     boolean test = checkIfContainerFreeToMove(c, containersArray);
                     if (!test){
                         opnieuw = test;
-                        System.out.println(c);
                     }
                 }
                 //All containers that need to be moved added to containersthatneedtobemovedArray
             }
-            System.out.println("opnieuw");
         }while (!opnieuw);
 
         for (Container c : containersThatNeedToBeMoved) {
@@ -391,15 +384,7 @@ public class Yard {
                         else if(isLatestmove(b) && isCollision(b,volgende)){
                            temp = moveKraan(b.getKraan_id(), volgende.getStartTijdstip(), volgende.getStart(), volgende.getEind());
                            tempAdded = true;
-                           System.out.println("collision" + b.getId());
-                           System.out.println("nieuwe collision" + volgende.getId() + "kraan: " + volgende.getKraan_id());
                        }
-//                        else if(isLatestmove(b) && isCrossOver(b,volgende)){
-//                           temp = moveKraanCrossOverLatest(b,volgende);
-//                           tempAdded = true;
-//                           System.out.println("crossover " +  b.getId());
-//                           System.out.println("nieuwe crossover: " + volgende.getId() + "kraan: " + volgende.getKraan_id());
-//                       }
 
                     }
                 }
@@ -696,8 +681,8 @@ public class Yard {
 
 
             for (Kraan kraan : availableCranes){
-                if(Math.abs(eindX - kraan.getX()) < grootte){
-                    grootte = Math.abs(eindX - kraan.getX());
+                if(Math.abs(startX - kraan.getX()) < grootte){
+                    grootte = Math.abs(startX - kraan.getX());
                     kleinst = kraan;
                 }
             }
@@ -770,8 +755,6 @@ public class Yard {
                             eindKraan.setY(j);
                         }
 
-                        System.out.println("start" + startKraan.getId());
-                        System.out.println("eind" + eindKraan.getId());
 
                         if(!feasible(eindX,eindY,c.getTarget_hoogte(),c)){
                             checkTargetId(c);
